@@ -1,7 +1,5 @@
 using Random
 include("individual.jl")
-include("selection.jl")
-
 
 mutable struct GeneticAlgorithm
     seed::Int64
@@ -48,7 +46,7 @@ mutable struct GeneticAlgorithm
         offspring_size::Float64
     )
         #set seed
-        seed!(seed)
+        Random.seed!(seed)
 
         elitesize = ceil(population_size * elite_size)
         offspringsize = floor(population_size * offspring_size)

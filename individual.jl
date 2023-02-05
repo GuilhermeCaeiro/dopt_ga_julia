@@ -5,12 +5,10 @@ mutable struct Individual
     objective_function::Float64
     penalty::Float64
     
-
     function Individual(ga::GeneticAlgorithm, chromosome::Vector{Int64})
         fitness, objective_function, penalty = calculate_fitness(chromosome, ga.A)
         new(ga, chromosome, fitness, objective_function, penalty)
     end
-
 end
 
 function ldet(A)

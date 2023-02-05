@@ -29,8 +29,8 @@ function calculate_fitness(chromosome, A, s)
     objective_function = ldet(A'*diagm(vec(chromosome))*A);
     penalty = - 100 * abs(num_ones - s)
     fitness = objective_function + penalty
-    println(chromosome)
-    println(num_ones, objective_function, penalty, fitness)
+    #println(chromosome)
+    #println(num_ones, objective_function, penalty, fitness)
     return fitness, objective_function, penalty
 end
 

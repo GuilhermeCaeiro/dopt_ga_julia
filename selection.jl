@@ -1,6 +1,7 @@
 using StatsBase
 
 function fullyrandom(individuals::Vector{Individual}, num_individuals::Integer)
+    #println(size(individuals), " ", num_individuals)
     indices = sample(1:size(individuals, 1), num_individuals, replace=false)
     return individuals[indices]
 end

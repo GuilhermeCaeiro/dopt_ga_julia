@@ -1,3 +1,7 @@
+using LinearAlgebra
+
+#include("genetic_algorithm.jl")
+
 mutable struct Individual
     ga::GeneticAlgorithm
     chromosome::Vector{Int64}
@@ -28,10 +32,4 @@ function calculate_fitness(chromosome, A)
     return fitness, objective_function, penalty
 end
 
-function mutate(ga::GeneticAlgorithm, individual::Individual)
-    
-end
-
-function breed(parent1::Individual, parent2::Individual)
-
-end
+println("Hello world")

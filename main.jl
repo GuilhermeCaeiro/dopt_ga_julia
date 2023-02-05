@@ -1,10 +1,10 @@
 using Random
 include("genetic_algorithm.jl")
-#include("initialization.jl")
-#include("individual.jl")
-#include("selection.jl")
-#include("mutation.jl")
-#include("crossover.jl")
+include("initialization.jl")
+include("individual.jl")
+include("selection.jl")
+include("mutation.jl")
+include("crossover.jl")
 
 function main()
     println("Starting GA.")
@@ -13,8 +13,9 @@ function main()
     A = rand(50,50) * ((10 - (0)) - 1)
     #println(A)
 
-    ga = GeneticAlgorithm(1, "teste", 1000, 60, 30, 50, 50, 25, something, "binary", "random", "ranking", "fullyrandom", "binary_singlepoint", 0.1, "binary_mask", 0.8, 0.2, 0.5)
-    #results = loop(ga)
+    ga = GeneticAlgorithm(1, "teste", 1, 60, 30, 50, 50, 25, A, "binary", "binary_random", "ranking", "fullyrandom", "binary_singlepoint", 0.1, "binary_mask", 0.8, 0.2, 0.5)
+    println(ga.crossover_method)
+    results = loop(ga)
     
     #println("Best fitness ", results[1].fitness)
     #println("Best solution ", results[1].chromosome)

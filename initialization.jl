@@ -4,9 +4,10 @@ function binary_random(ga::GeneticAlgorithm)
     population = Vector{Individual}()
     
     for i in 1:ga.population_size
-        chromosome = zeros(ga.n)
+        chromosome = zeros(Int64, ga.n)
         indices = sample(1:ga.n, ga.s, replace=false)
         chromosome[indices] .= 1
+        println(chromosome)
         individual = Individual(ga, chromosome)
         
         push!(population, individual)

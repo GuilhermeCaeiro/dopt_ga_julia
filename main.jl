@@ -1,5 +1,7 @@
 using Random
 using Dates
+using MAT
+using DelimitedFiles
 
 include("environment.jl")
 include("individual.jl")
@@ -14,14 +16,28 @@ function get_time_in_ms()
     return convert(Dates.Millisecond, Dates.now())
 end
 
+function read_instance(m, i)
+    file = matopen("instances/instance_$(m)_$(i).mat")
+    A = read(file, "A")
+    R = read(file, "R")
+    close(file)
+    n, m = size(A, 1), size(A, 2) # Gabriel uses n as the number of lines (experiments).
+    s = Int(n/2)
+    return A, R, m, n, s
+end
+
 function main()
     println("Starting GA.")
     Random.seed!(0)
+    
+    # loading instance
+    #A = rand(50,50) * ((10 - (0)) - 1)
+    #println(A)
+
+    A, R, m, n, s = read_instance(300, 1)
+
 
     start_time = get_time_in_ms()
-
-    A = rand(50,50) * ((10 - (0)) - 1)
-    #println(A)
 
     environment = Environment(
         1, 
@@ -29,9 +45,9 @@ function main()
         1000, 
         60, 
         30, 
-        50, 
-        50, 
-        25, 
+        n, 
+        m, 
+        s, 
         A, 
         "binary", 
         "binary_random", 
@@ -51,7 +67,7 @@ function main()
 
     println("Total Time: ", get_time_in_ms() - start_time)
     
-    print(results)
+    print(results[1].fitness)
     #println("Best fitness ", results[1].fitness)
     #println("Best solution ", results[1].chromosome)
 end

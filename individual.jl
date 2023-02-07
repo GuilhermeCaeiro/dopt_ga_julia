@@ -3,15 +3,15 @@ using LinearAlgebra
 #include("genetic_algorithm.jl")
 
 mutable struct Individual
-    ga::GeneticAlgorithm
+    environment::Any
     chromosome::Vector{Int64}
     fitness::Float64
     objective_function::Float64
     penalty::Float64
     
-    function Individual(ga::GeneticAlgorithm, chromosome::Vector{Int64})
-        fitness, objective_function, penalty = calculate_fitness(chromosome, ga.A, ga.s)
-        new(ga, chromosome, fitness, objective_function, penalty)
+    function Individual(environment::Environment, chromosome::Vector{Int64})
+        fitness, objective_function, penalty = calculate_fitness(chromosome, environment.A, environment.s)
+        new(environment, chromosome, fitness, objective_function, penalty)
     end
 end
 

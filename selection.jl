@@ -33,7 +33,7 @@ function ranking(individuals::Vector{Individual}, num_individuals::Integer)
 end
 
 # It is assumed that the "individuals" is sorted by fitness, from greatest to smallest.
-function select(ga::GeneticAlgorithm, individuals::Vector{Individual}, num_individuals::Integer, method::String)
+function select(environment::Environment, individuals::Vector{Individual}, num_individuals::Integer, method::String)
     selected = Vector{Individual}()
 
     if method == "fullyrandom"

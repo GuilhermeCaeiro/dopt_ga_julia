@@ -3,54 +3,18 @@ using Random
 #include("individual.jl")
 
 mutable struct GeneticAlgorithm
-    seed::Int64
-    instance::String
-    max_generations::Int64
-    max_time::Int64
-    population_size::Int64
-    n::Int64
-    m::Int64
-    s::Int64
-    A::Matrix{Float64}
-    encoding::String
-    initialization_method::String
-    selecion_method::String
-    parent_selection_method::String
-    mutation_method::String
-    mutation_probability::Float64
-    crossover_method::String
-    crossover_probability::Float64
-    best_solution::Float64
+    environment::Environment
     elite_size::Int64
     offspring_size::Int64
+    best_solution::Float64
     elite::Vector{Individual}
 
-    function GeneticAlgorithm(
-        seed::Int64,
-        instance::String,
-        max_generations::Int64,
-        max_time::Int64,
-        population_size::Int64,
-        n::Int64,
-        m::Int64,
-        s::Int64,
-        A::Matrix{Float64},
-        encoding::String,
-        initialization_method::String,
-        selecion_method::String,
-        parent_selection_method::String,
-        mutation_method::String,
-        mutation_probability::Float64,
-        crossover_method::String,
-        crossover_probability::Float64,
-        elite_size::Float64,
-        offspring_size::Float64
-    )
+    function GeneticAlgorithm(environment::Environment)
         #set seed
-        Random.seed!(seed)
+        Random.seed!(environment.seed)
 
-        elitesize = ceil(Int64, population_size * elite_size)
-        offspringsize = floor(Int64, population_size * offspring_size)
+        elitesize = ceil(Int64, environment.population_size * environment.elite_size)
+        offspringsize = floor(Int64, environment.population_size * environment.offspring_size)
         bestsolution = -Inf
         elite = Vector{Individual}()
 
@@ -82,26 +46,10 @@ mutable struct GeneticAlgorithm
 
         # populate struct variables
         new(
-            seed,
-            instance,
-            max_generations,
-            max_time,
-            population_size,
-            n,
-            m,
-            s,
-            A,
-            encoding,
-            initialization_method,
-            selecion_method,
-            parent_selection_method,
-            mutation_method,
-            mutation_probability,
-            crossover_method,
-            crossover_probability,
-            bestsolution,
+            environment,
             elitesize,
             offspringsize,
+            bestsolution,
             elite
         )
 
@@ -112,26 +60,27 @@ end
 function loop(ga::GeneticAlgorithm)
     # Initialize population
     #population = Vector{Individual}()
-    population = initialize_population(ga)
+    population = initialize_population(ga.environment)
 
     # runs generations
-    for generation in 1:ga.max_generations
+    for generation in 1:ga.environment.max_generations
+        println("Generation ", generation)
         sort!(population, by = v -> v.fitness, rev = true)
         
         children = Vector{Individual}()
         
         # crossover and mutation
-        while size(children, 1) < ga.offspring_size
-            if rand(Float64, 1)[1] < ga.crossover_probability
-                parents = select(ga, population, 2, ga.parent_selection_method)
+        while size(children, 1) < ga.environment.offspring_size
+            if rand(Float64, 1)[1] < ga.environment.crossover_probability
+                parents = select(ga.environment, population, 2, ga.environment.parent_selection_method)
                 #print(methods(breed))
-                offspring = breed(ga, parents[1], parents[2])
+                offspring = breed(ga.environment, parents[1], parents[2])
                 children = [children; offspring]
             end
 
-            if rand(Float64, 1)[1] < ga.mutation_probability
-                somebody = select(ga, population, 1, ga.parent_selection_method)
-                mutant = mutate(ga, somebody[1])
+            if rand(Float64, 1)[1] < ga.environment.mutation_probability
+                somebody = select(ga.environment, population, 1, ga.environment.parent_selection_method)
+                mutant = mutate(ga.environment, somebody[1])
                 children = [children; mutant]
             end
         end
@@ -146,7 +95,7 @@ function loop(ga::GeneticAlgorithm)
         #println("ga.elite_size ", ga.elite_size)
         ga.elite = population[1:ga.elite_size]
         commoners = population[(ga.elite_size + 1):end]
-        commoners = select(ga, commoners, ga.population_size - size(ga.elite)[1], ga.selecion_method)
+        commoners = select(ga.environment, commoners, ga.environment.population_size - size(ga.elite)[1], ga.environment.selecion_method)
         population = [ga.elite; commoners]
     end
 

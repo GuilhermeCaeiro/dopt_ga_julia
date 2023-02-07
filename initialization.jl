@@ -1,14 +1,14 @@
 using StatsBase
 
-function binary_random(ga::GeneticAlgorithm)
+function binary_random(environment::Environment)
     population = Vector{Individual}()
     
-    for i in 1:ga.population_size
-        chromosome = zeros(Int64, ga.n)
-        indices = sample(1:ga.n, ga.s, replace=false)
+    for i in 1:environment.population_size
+        chromosome = zeros(Int64, environment.n)
+        indices = sample(1:environment.n, environment.s, replace=false)
         chromosome[indices] .= 1
-        println(chromosome)
-        individual = Individual(ga, chromosome)
+        #println(chromosome)
+        individual = Individual(environment, chromosome)
         
         push!(population, individual)
     end
@@ -16,14 +16,14 @@ function binary_random(ga::GeneticAlgorithm)
     return population
 end
 
-function initialize_population(ga::GeneticAlgorithm)
+function initialize_population(environment::Environment)
     population = Vector{Individual}()
-    if ga.initialization_method == "binary_random"
-        population = binary_random(ga)
-    elseif ga.initialization_method == "something"
+    if environment.initialization_method == "binary_random"
+        population = binary_random(environment)
+    elseif environment.initialization_method == "something"
         population = population # placeholder
     else
-        println("Unknow initialization method ", ga.initialization_method)
+        println("Unknow initialization method ", environment.initialization_method)
     end
     return population
 end

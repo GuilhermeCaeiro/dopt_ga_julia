@@ -18,15 +18,15 @@ function binary_mask(chromosome1::Vector{Int64}, chromosome2::Vector{Int64}, num
 
 end
 
-function breed(ga::GeneticAlgorithm, parent1::Individual, parent2::Individual)
+function breed(environment::Environment, parent1::Individual, parent2::Individual)
     offspring = []
 
-    if ga.crossover_method == "binary_mask"
+    if environment.crossover_method == "binary_mask"
         #println("type of chromosome: ", typeof(parent1.chromosome))
-        chromosome1, chromosome2 = binary_mask(parent1.chromosome, parent2.chromosome, ga.s)
-        offspring = [Individual(ga, chromosome1), Individual(ga, chromosome2)]
+        chromosome1, chromosome2 = binary_mask(parent1.chromosome, parent2.chromosome, environment.s)
+        offspring = [Individual(environment, chromosome1), Individual(environment, chromosome2)]
     else
-        println("Uknown crossover method ", ga.crossover_method)
+        println("Uknown crossover method ", environment.crossover_method)
     end
     
     return offspring

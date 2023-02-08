@@ -2,6 +2,7 @@ using Random
 using Dates
 using MAT
 using DelimitedFiles
+using Plots
 
 include("environment.jl")
 include("individual.jl")
@@ -42,7 +43,7 @@ function main()
     environment = Environment(
         1, 
         "teste", 
-        1000, 
+        20000, 
         60, 
         30, 
         n, 
@@ -63,11 +64,14 @@ function main()
 
     ga = GeneticAlgorithm(environment)
     println(ga.environment.crossover_method)
-    results = loop(ga)
+    results, solutions = loop(ga)
 
     println("Total Time: ", get_time_in_ms() - start_time)
     
     print(results[1].fitness)
+
+    p = plot(1:size(solutions, 1), solutions)
+    savefig(p, "plot.png") 
     #println("Best fitness ", results[1].fitness)
     #println("Best solution ", results[1].chromosome)
 end

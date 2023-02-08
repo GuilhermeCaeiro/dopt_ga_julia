@@ -7,6 +7,7 @@ mutable struct GeneticAlgorithm
     elite_size::Int64
     offspring_size::Int64
     best_solution::Float64
+    best_solution_tracking::Vector{Float64}
     elite::Vector{Individual}
 
     function GeneticAlgorithm(environment::Environment)
@@ -17,6 +18,7 @@ mutable struct GeneticAlgorithm
         offspringsize = floor(Int64, environment.population_size * environment.offspring_size)
         bestsolution = -Inf
         elite = Vector{Individual}()
+        best_solution_tracking = Vector{Float64}()
 
         #=
         println(
@@ -50,6 +52,7 @@ mutable struct GeneticAlgorithm
             elitesize,
             offspringsize,
             bestsolution,
+            best_solution_tracking,
             elite
         )
 
@@ -92,6 +95,8 @@ function loop(ga::GeneticAlgorithm)
             ga.best_solution = population[1].fitness
         end
 
+        push!(ga.best_solution_tracking, ga.best_solution)
+
         #println("ga.elite_size ", ga.elite_size)
         ga.elite = population[1:ga.elite_size]
         commoners = population[(ga.elite_size + 1):end]
@@ -99,5 +104,5 @@ function loop(ga::GeneticAlgorithm)
         population = [ga.elite; commoners]
     end
 
-    return ga.elite
+    return ga.elite, ga.best_solution_tracking
 end

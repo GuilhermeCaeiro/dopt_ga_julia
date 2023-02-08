@@ -8,13 +8,13 @@ end
 
 #
 function roulette(individuals::Vector{Individual}, num_individuals::Integer)
-    weights = Vector{Integer}()
+    weights = Vector{Float64}()
 
     for i in 1:size(individuals, 1)
         push!(weights, individuals[i].fitness)
     end
 
-    weights = weights / sum(weights)
+    weights = 1 ./ (1 .+ exp.(-weights))
     
     indices = sample(1:size(individuals, 1), Weights(weights), num_individuals, replace=false)
     return individuals[indices]

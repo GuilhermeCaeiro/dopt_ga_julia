@@ -56,10 +56,12 @@ end
 
 function breed(environment::Environment, parent1::Individual, parent2::Individual)
     offspring = []
+    p1_chromosome = deepcopy(parent1.chromosome) # TODO check if copying here is really necessary
+    p2_chromosome = deepcopy(parent2.chromosome)
 
     if environment.crossover_method == "binary_mask"
         #println("type of chromosome: ", typeof(parent1.chromosome))
-        chromosome1, chromosome2 = binary_mask(parent1.chromosome, parent2.chromosome, environment.s)
+        chromosome1, chromosome2 = binary_mask(p1_chromosome, p2_chromosome, environment.s)
         offspring = [Individual(environment, chromosome1), Individual(environment, chromosome2)]
     else
         println("Uknown crossover method ", environment.crossover_method)

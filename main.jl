@@ -35,7 +35,7 @@ function main()
     #A = rand(50,50) * ((10 - (0)) - 1)
     #println(A)
 
-    A, R, m, n, s = read_instance(40, 1)
+    A, R, m, n, s = read_instance(300, 1)
 
 
     start_time = get_time_in_ms()
@@ -43,22 +43,22 @@ function main()
     environment = Environment(
         1, 
         "teste", 
-        20000, 
+        10000, 
         60, 
-        30, 
+        100, 
         n, 
         m, 
         s, 
         A, 
         "binary", 
         "binary_random", 
-        "ranking", 
+        "roulette", 
         "fullyrandom", 
         "binary_singlepoint", 
         0.1, 
         "binary_mask", 
-        0.8, 
-        0.2, 
+        0.9, 
+        0.3, 
         0.5
     )
 
@@ -66,7 +66,7 @@ function main()
     println(ga.environment.crossover_method)
     results, solutions = loop(ga)
 
-    println("Total Time: ", get_time_in_ms() - start_time)
+    println("Num. generations: ", environment.max_generations, " Total Time: ", get_time_in_ms() - start_time)
     
     print(results[1].fitness)
 

@@ -20,32 +20,6 @@ mutable struct GeneticAlgorithm
         elite = Vector{Individual}()
         best_solution_tracking = Vector{Float64}()
 
-        #=
-        println(
-            seed,
-            instance,
-            max_generations,
-            max_time,
-            population_size,
-            n,
-            m,
-            s,
-            A,
-            encoding,
-            initialization_method,
-            selecion_method,
-            parent_selection_method,
-            mutation_method,
-            mutation_probability,
-            crossover_method,
-            crossover_probability,
-            bestsolution,
-            elitesize,
-            offspringsize,
-            elite
-        )
-        =#
-
         # populate struct variables
         new(
             environment,
@@ -67,13 +41,15 @@ function loop(ga::GeneticAlgorithm)
 
     # runs generations
     for generation in 1:ga.environment.max_generations
-        println("Generation ", generation)
+        if generation % 1000 == 0
+            println("Generation ", generation)
+        end
         sort!(population, by = v -> v.fitness, rev = true)
         
         children = Vector{Individual}()
         
         # crossover and mutation
-        while size(children, 1) < ga.environment.offspring_size
+        while size(children, 1) < ga.offspring_size
             if rand(Float64, 1)[1] < ga.environment.crossover_probability
                 parents = select(ga.environment, population, 2, ga.environment.parent_selection_method)
                 #print(methods(breed))

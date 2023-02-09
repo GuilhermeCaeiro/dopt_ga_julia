@@ -35,7 +35,7 @@ function main()
     #A = rand(50,50) * ((10 - (0)) - 1)
     #println(A)
 
-    A, R, m, n, s = read_instance(300, 1)
+    A, R, m, n, s = read_instance(40, 1)
 
 
     start_time = get_time_in_ms()

@@ -16,6 +16,31 @@ function binary_random(environment::Environment)
     return population
 end
 
+function binary_biased(environment::Environment, min_diff::Float64)
+    chromosomes = Vector{Vector{Int64}}()
+    
+    while size(chromosomes, 1) < environment.population_size
+        chromosome = zeros(Int64, environment.n)
+        chromosome[sample(1:size(chromosome. 1), environment.s, replace = false)] .= 1
+        found_close = false
+
+        for existing_chromosome in chromosomes
+            if mean(abs(existing_chromosome - chromosome)) < min_diff
+                found_close = true
+                break
+            end
+        end
+        if !found_close
+            push!(chromosomes, chromosome)
+        end
+    end
+
+    return chromosomes
+end
+
+
+
+
 function initialize_population(environment::Environment)
     population = Vector{Individual}()
     if environment.initialization_method == "binary_random"

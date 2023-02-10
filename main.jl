@@ -1,9 +1,7 @@
 using Random
-using Dates
-using MAT
-using DelimitedFiles
 using Plots
 
+include("utils.jl")
 include("environment.jl")
 include("individual.jl")
 include("initialization.jl")
@@ -12,28 +10,9 @@ include("mutation.jl")
 include("crossover.jl")
 include("genetic_algorithm.jl")
 
-
-function get_time_in_ms()
-    return convert(Dates.Millisecond, Dates.now())
-end
-
-function read_instance(m, i)
-    file = matopen("instances/instance_$(m)_$(i).mat")
-    A = read(file, "A")
-    R = read(file, "R")
-    close(file)
-    n, m = size(A, 1), size(A, 2) # Gabriel uses n as the number of lines (experiments).
-    s = Int(n/2)
-    return A, R, m, n, s
-end
-
 function main()
     println("Starting GA.")
     Random.seed!(0)
-    
-    # loading instance
-    #A = rand(50,50) * ((10 - (0)) - 1)
-    #println(A)
 
     A, R, m, n, s = read_instance(300, 1)
 
@@ -43,7 +22,7 @@ function main()
     environment = Environment(
         1, 
         "teste", 
-        10000, 
+        100, 
         60, 
         100, 
         n, 

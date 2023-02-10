@@ -1,4 +1,5 @@
 using Random
+using Dates
 
 #include("individual.jl")
 
@@ -38,10 +39,12 @@ function loop(ga::GeneticAlgorithm)
     # Initialize population
     #population = Vector{Individual}()
     population = initialize_population(ga.environment)
+    iter_times = Vector{Int64}()
 
     # runs generations
     for generation in 1:ga.environment.max_generations
-        if generation % 1000 == 0
+        iter_start_time = get_time_in_ms()
+        if generation % 1 == 0
             println("Generation ", generation)
         end
         sort!(population, by = v -> v.fitness, rev = true)
@@ -78,7 +81,11 @@ function loop(ga::GeneticAlgorithm)
         commoners = population[(ga.elite_size + 1):end]
         commoners = select(ga.environment, commoners, ga.environment.population_size - size(ga.elite)[1], ga.environment.selecion_method)
         population = [ga.elite; commoners]
+
+        push!(iter_times, get_time_in_ms().value - iter_start_time.value)
     end
+
+    println("Avg. Time for ", ga.environment.max_generations, " iterations: ", mean(iter_times), " Min|Max: ", minimum(iter_times), " | ", maximum(iter_times))
 
     return ga.elite, ga.best_solution_tracking
 end

@@ -44,7 +44,7 @@ function loop(ga::GeneticAlgorithm)
     # runs generations
     for generation in 1:ga.environment.max_generations
         iter_start_time = get_time_in_ms()
-        if generation % 1 == 0
+        if generation % 1000 == 0
             println("Generation ", generation)
         end
         sort!(population, by = v -> v.fitness, rev = true)

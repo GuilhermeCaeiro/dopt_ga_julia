@@ -14,7 +14,7 @@ function main()
     println("Starting GA.")
     Random.seed!(0)
 
-    A, R, m, n, s = read_instance(300, 1)
+    A, R, m, n, s = read_instance(40, 1)
 
 
     start_time = get_time_in_ms()
@@ -22,7 +22,7 @@ function main()
     environment = Environment(
         1, 
         "teste", 
-        100, 
+        10000, 
         60, 
         100, 
         n, 
@@ -31,12 +31,16 @@ function main()
         A, 
         "binary", 
         "binary_random", 
+        [],
         "roulette", 
         "fullyrandom", 
+        [],
         "binary_singlepoint", 
         0.1, 
+        [],
         "binary_mask", 
         0.9, 
+        [],
         0.3, 
         0.5
     )

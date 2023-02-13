@@ -32,8 +32,43 @@ function ranking(individuals::Vector{Individual}, num_individuals::Integer)
     return individuals[indices]
 end
 
+function tournament(individuals::Vector{Individual}, num_individuals::Int64, k)
+    winners = Vector{Individual}()
+    for match in 1:num_individuals
+        contestants = individuals[sample(1:size(individuals, 1), k, replace=false)]
+        sort!(contestants, by = v -> v.fitness, rev = true)
+        push!(winners, contestants[1])
+    end
+    return winners
+end
+
+function byclass(individuals::Vector{Individual}, num_individuals::Int64, percent_best, percent_worst)
+    if (percent_best + percent_worst) > 1.0
+        throw(error("(percent_best + percent_worst) > 1.0! It must be 0 < (percent_best + percent_worst) <= 1.0"))
+    end
+
+    n_best_individuals = floor(num_individuals * percent_best)
+    n_worst_individuals = floor(num_individuals * percent_worst)
+
+    best_individuals = individuals[1:n_best_individuals]
+    worst_individuals = individuals[(size(individuals, 1) - n_worst_individuals + 1):end]
+
+    n_remaining_individuals = num_individuals - n_best_individuals - n_worst_individuals
+    remaining_individuals = Vector{Individual}()
+    
+    if n_remaining_individuals > 0
+        remaining_individuals = sample(individuals, n_remaining_individuals, replace=true) # sampling from the complete individual set with replacement.
+    end
+
+    return vcat(best_individuals, worst_individuals, remaining_individuals)
+end
+
 # It is assumed that the "individuals" is sorted by fitness, from greatest to smallest.
 function select(environment::Environment, individuals::Vector{Individual}, num_individuals::Integer, method::String)
+    if num_individuals > size(individuals, 1)
+        throw(error("Trying to select more individuals than available."))
+    end
+    
     selected = Vector{Individual}()
 
     if method == "fullyrandom"
@@ -42,6 +77,10 @@ function select(environment::Environment, individuals::Vector{Individual}, num_i
         selected = roulette(individuals, num_individuals)
     elseif method == "ranking"
         selected = ranking(individuals, num_individuals)
+    elseif method == "tournament"
+        selected = tournament(individuals, num_individuals, environment.selection_params[1])
+    elseif method == "byclass"
+        selected = byclass(individuals, num_individuals, environment.selection_params[1], environment.selection_params[2])
     else
         println("Unknow selection method ", method)
     end

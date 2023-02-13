@@ -59,7 +59,10 @@ function breed(environment::Environment, parent1::Individual, parent2::Individua
     #p1_chromosome = deepcopy(parent1.chromosome) # TODO check if copying here is really necessary
     #p2_chromosome = deepcopy(parent2.chromosome)
 
-    if environment.crossover_method == "binary_mask"
+    if environment.crossover_method == "binary_singlepoint"
+        chromosome1, chromosome2 = binary_singlepoint(parent1.chromosome, parent2.chromosome, environment.s)
+        offspring = [Individual(environment, chromosome1), Individual(environment, chromosome2)]
+    elseif environment.crossover_method == "binary_mask"
         #println("type of chromosome: ", typeof(parent1.chromosome))
         chromosome1, chromosome2 = binary_mask(parent1.chromosome, parent2.chromosome, environment.s)
         offspring = [Individual(environment, chromosome1), Individual(environment, chromosome2)]

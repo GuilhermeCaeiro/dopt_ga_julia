@@ -16,7 +16,7 @@ function binary_random(environment::Environment)
     return population
 end
 
-function binary_biased(environment::Environment, min_diff::Float64)
+function binary_biased(environment::Environment, min_diff)
     chromosomes = Vector{Vector{Int64}}()
     
     while size(chromosomes, 1) < environment.population_size
@@ -64,8 +64,12 @@ function initialize_population(environment::Environment)
     population = Vector{Individual}()
     if environment.initialization_method == "binary_random"
         population = binary_random(environment)
-    elseif environment.initialization_method == "something"
-        population = population # placeholder
+    elseif environment.initialization_method == "binary_biased"
+        # initicialization_params is assumed to be  a float
+        population = binary_biased(environment, environment.initialization_params[1])
+    elseif environment.initialization_method == "binary_biasedweighted"
+        # initicialization_params is assumed to be  a float
+        population = binary_biasedweighted(environment)
     else
         println("Unknow initialization method ", environment.initialization_method)
     end

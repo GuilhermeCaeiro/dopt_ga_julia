@@ -17,15 +17,16 @@ function binary_random(environment::Environment)
 end
 
 function binary_biased(environment::Environment, min_diff)
+    #println(("binary_biased", min_diff))
     chromosomes = Vector{Vector{Int64}}()
     
     while size(chromosomes, 1) < environment.population_size
         chromosome = zeros(Int64, environment.n)
-        chromosome[sample(1:size(chromosome. 1), environment.s, replace = false)] .= 1
+        chromosome[sample(1:size(chromosome, 1), environment.s, replace = false)] .= 1
         found_close = false
 
         for existing_chromosome in chromosomes
-            if mean(abs(existing_chromosome - chromosome)) < min_diff
+            if mean(abs.(existing_chromosome - chromosome)) < min_diff
                 found_close = true
                 break
             end
@@ -35,26 +36,27 @@ function binary_biased(environment::Environment, min_diff)
         end
     end
 
-    return chromosomes
+    return [Individual(environment, chromosome) for chromosome in chromosomes]
 end
 
 function binary_biasedweighted(environment::Environment)
+    println("binary_biasedweighted")
     chromosomes = Vector{Vector{Int64}}()
     
     chromosome = zeros(Int64, environment.n)
-    chromosome[sample(1:size(chromosome. 1), environment.s, replace = false)] .= 1
+    chromosome[sample(1:size(chromosome, 1), environment.s, replace = false)] .= 1
     push!(chromosomes, chromosome)
 
     while size(chromosomes, 1) < environment.population_size
         weights = 1 ./ (sum(chromosomes) .+ 1) # the sum() is by default row-wise, producing a Vector.
-        weights = weights ./ sum(p)
+        weights = weights ./ sum(weights)
 
         chromosome = zeros(Int64, environment.n)
-        chromosome[sample(1:size(chromosome. 1), Weights(weights), environment.s, replace = false)] .= 1
+        chromosome[sample(1:size(chromosome, 1), Weights(weights), environment.s, replace = false)] .= 1
         push!(chromosomes, chromosome)
     end
 
-    return chromosomes
+    return [Individual(environment, chromosome) for chromosome in chromosomes]
 end
 
 

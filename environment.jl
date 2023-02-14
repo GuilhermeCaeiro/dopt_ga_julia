@@ -1,4 +1,4 @@
-struct Environment
+mutable struct Environment
     seed::Int64
     instance::String
     max_generations::Int64

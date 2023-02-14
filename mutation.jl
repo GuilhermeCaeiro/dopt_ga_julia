@@ -16,7 +16,7 @@ function binary_percentchange_mutation!(chromosome::Vector{Int64}, environment::
     ones = findall(x -> x == 1, chromosome)
     zeros = findall(x -> x == 0, chromosome)
 
-    num_changes = ceil(environment.s * percent)
+    num_changes = ceil(Int64, environment.s * percent)
     ones_to_change = sample(ones, num_changes, replace=false)
     zeros_to_change = sample(zeros, num_changes, replace=false)
 

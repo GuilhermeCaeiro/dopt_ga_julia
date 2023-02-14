@@ -47,14 +47,16 @@ function byclass(individuals::Vector{Individual}, num_individuals::Int64, percen
         throw(error("(percent_best + percent_worst) > 1.0! It must be 0 < (percent_best + percent_worst) <= 1.0"))
     end
 
-    n_best_individuals = floor(num_individuals * percent_best)
-    n_worst_individuals = floor(num_individuals * percent_worst)
+    n_best_individuals = ceil(Int64, num_individuals * percent_best)
+    n_worst_individuals = ceil(Int64, num_individuals * percent_worst)
 
     best_individuals = individuals[1:n_best_individuals]
     worst_individuals = individuals[(size(individuals, 1) - n_worst_individuals + 1):end]
 
     n_remaining_individuals = num_individuals - n_best_individuals - n_worst_individuals
     remaining_individuals = Vector{Individual}()
+
+    println((size(individuals, 1), num_individuals, n_best_individuals, n_worst_individuals, n_remaining_individuals))
     
     if n_remaining_individuals > 0
         remaining_individuals = sample(individuals, n_remaining_individuals, replace=true) # sampling from the complete individual set with replacement.

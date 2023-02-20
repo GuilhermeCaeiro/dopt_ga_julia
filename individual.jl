@@ -1,4 +1,5 @@
 using LinearAlgebra
+using SparseArrays
 
 #include("genetic_algorithm.jl")
 
@@ -26,7 +27,7 @@ end
 
 function calculate_fitness(chromosome, A, s)
     num_ones = sum(chromosome)
-    objective_function = ldet(A'*diagm(vec(chromosome))*A);
+    objective_function = ldet(A'*spdiagm(vec(chromosome))*A);
     penalty = - 100 * abs(num_ones - s)
     fitness = objective_function + penalty
     #println(chromosome)

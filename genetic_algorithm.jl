@@ -40,11 +40,13 @@ function loop(ga::GeneticAlgorithm)
     #population = Vector{Individual}()
     population = initialize_population(ga.environment)
     iter_times = Vector{Int64}()
+    #num_infs = 0
+    #num_zundef = 0
 
     # runs generations
     for generation in 1:ga.environment.max_generations
         iter_start_time = get_time_in_ms()
-        if generation % 1000 == 0
+        if generation % 100 == 0
             println("Generation ", generation)
         end
         sort!(population, by = v -> v.fitness, rev = true)
@@ -70,6 +72,19 @@ function loop(ga::GeneticAlgorithm)
         population = [population; children]
         sort!(population, by = v -> v.fitness, rev = true)
 
+        #=
+        num_infs = 0
+        num_zundef = 0
+        for individual in population
+            if isinf(individual.objective_function)
+                num_infs += 1
+            end
+            if !isdefined(individual, :Z_matrix)
+                num_zundef += 1
+            end
+        end
+        =#
+
         if population[1].fitness > ga.best_solution
             ga.best_solution = population[1].fitness
         end
@@ -83,6 +98,13 @@ function loop(ga::GeneticAlgorithm)
         population = [ga.elite; commoners]
 
         push!(iter_times, get_time_in_ms().value - iter_start_time.value)
+
+        #println("Num. infs: ", num_infs)
+        #println("Num. Z_matrix undef: ", num_zundef)
+
+        #if generation == 20
+        #    break
+        #end
     end
 
     println("Avg. Time for ", ga.environment.max_generations, " iterations: ", mean(iter_times), " Min|Max: ", minimum(iter_times), " | ", maximum(iter_times))

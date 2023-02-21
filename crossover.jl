@@ -73,21 +73,62 @@ function binary_mask(chromosome1::Vector{Int64}, chromosome2::Vector{Int64}, num
 end
 
 function breed(environment::Environment, parent1::Individual, parent2::Individual)
-    offspring = []
+    #offspring = []
     p1_chromosome = deepcopy(parent1.chromosome) 
     p2_chromosome = deepcopy(parent2.chromosome)
+    chromosome1 = []
+    chromosome2 = []
 
     if environment.crossover_method == "binary_singlepoint"
         chromosome1, chromosome2 = binary_singlepoint(p1_chromosome, p2_chromosome, environment.s)
-        offspring = [Individual(environment, chromosome1), Individual(environment, chromosome2)]
+        #offspring = [Individual(environment, chromosome1), Individual(environment, chromosome2)]
     elseif environment.crossover_method == "binary_mask"
         #println("type of chromosome: ", typeof(parent1.chromosome))
         chromosome1, chromosome2 = binary_mask(parent1.chromosome, parent2.chromosome, environment.s)
-        offspring = [Individual(environment, chromosome1), Individual(environment, chromosome2)]
+        #offspring = [Individual(environment, chromosome1), Individual(environment, chromosome2)]
     else
-        println("Uknown crossover method ", environment.crossover_method)
+        throw(error("Uknown crossover method ", environment.crossover_method))
     end
+
+    differ_par1_offs1 = p1_chromosome - chromosome1
+    differ_par1_offs2 = p1_chromosome - chromosome2
+    differ_par2_offs1 = p2_chromosome - chromosome1
+    differ_par2_offs2 = p2_chromosome - chromosome2
+
+    val_differ_par1_offs1 = sum(abs.(differ_par1_offs1))
+    val_differ_par1_offs2 = sum(abs.(differ_par1_offs2))
+    val_differ_par2_offs1 = sum(abs.(differ_par2_offs1))
+    val_differ_par2_offs2 = sum(abs.(differ_par2_offs2))
+
+    parent_offs1 = parent1
+    parent_offs2 = parent2
     
+    new_ones_offs1 = []
+    new_ones_offs2 = []
+    new_zeros_offs1 = []
+    new_zeros_offs2 = []
+
+    if (val_differ_par1_offs1 >= val_differ_par2_offs1)
+        parent_offs1 = parent2
+        new_ones_offs1 = findall(x -> x == -1, differ_par2_offs1)
+        new_zeros_offs1 = findall(x -> x == 1, differ_par2_offs1)
+    else
+        parent_offs1 = parent1
+        new_ones_offs1 = findall(x -> x == -1, differ_par1_offs1)
+        new_zeros_offs1 = findall(x -> x == 1, differ_par1_offs1)
+    end
+
+    if (val_differ_par1_offs2 >= val_differ_par2_offs2)
+        parent_offs2 = parent2
+        new_ones_offs2 = findall(x -> x == -1, differ_par2_offs2)
+        new_zeros_offs2 = findall(x -> x == 1, differ_par2_offs2)
+    else
+        parent_offs2 = parent1
+        new_ones_offs2 = findall(x -> x == -1, differ_par1_offs2)
+        new_zeros_offs2 = findall(x -> x == 1, differ_par1_offs2)
+    end
+
+    offspring = [Individual(environment, chromosome1, parent_offs1, new_ones_offs1, new_zeros_offs1), Individual(environment, chromosome2, parent_offs2, new_ones_offs2, new_zeros_offs2)]
     return offspring
 end
 

@@ -22,7 +22,7 @@ function main()
     environment = Environment(
         1, 
         "teste", 
-        1000, 
+        6, 
         60, 
         100, 
         n, 

@@ -58,6 +58,8 @@ for j in 15:100
 
         test_individual = Individual(environment, new_chromosome, individual, [_zeros[i]], [_ones[i]])
         control_individual = Individual(environment, new_chromosome)
+        println("Parent OF: ", individual.objective_function, ", test child OF - parent's: ", test_individual.objective_function - individual.objective_function)
+        println("Parent OF: ", individual.objective_function, ", control child OF - parent's: ", control_individual.objective_function - individual.objective_function)
 
         println((
             j,

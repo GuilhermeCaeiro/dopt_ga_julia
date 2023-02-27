@@ -20,29 +20,29 @@ function main()
     start_time = get_time_in_ms()
 
     environment = Environment(
-        1, 
-        "teste", 
-        6, 
-        60, 
-        100, 
-        n, 
-        m, 
-        s, 
-        A, 
-        "binary", 
-        "binary_random", 
-        [],
-        "roulette", 
-        "fullyrandom", 
-        [],
-        "binary_singlepoint", 
-        0.1, 
-        [],
-        "binary_mask", 
-        0.9, 
-        [],
-        0.3, 
-        0.5
+        1, # seed
+        "teste", # instance
+        10_000, # max_generations
+        60, # max_time
+        100, # population_size
+        n, # n
+        m, # m
+        s, # s
+        A, # A
+        "binary", # encoding 
+        "binary_random", # initialization_method
+        [], # initialization_params
+        "roulette", # selecion_method
+        "fullyrandom", # parent_selection_method
+        [], # selection_params
+        "binary_singlepoint", # mutation_method
+        0.1, # mutation_probability
+        [], # mutation_params
+        "binary_mask", # crossover_method
+        0.9, # crossover_probability
+        [], # crossover_params
+        0.3, # elite_size
+        0.5 # offspring_size
     )
 
     ga = GeneticAlgorithm(environment)
@@ -51,7 +51,8 @@ function main()
 
     println("Num. generations: ", environment.max_generations, " Total Time: ", get_time_in_ms() - start_time)
     
-    print(results[1].fitness)
+    println(results[1].fitness)
+    println(results[1].chromosome)
 
     p = plot(1:size(solutions, 1), solutions)
     savefig(p, "plot.png") 

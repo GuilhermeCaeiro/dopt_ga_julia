@@ -35,7 +35,7 @@ environment = Environment(
     0.5
 )
 
-for j in 15:100
+for j in 12:100
     Random.seed!(j)
     chromosome = zeros(Int64, environment.n)
     indices = sample(1:environment.n, environment.s, replace=false)

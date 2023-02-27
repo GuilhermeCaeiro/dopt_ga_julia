@@ -31,7 +31,7 @@ mutable struct Individual
         end
 
         if isinf(parent.objective_function)
-            println("Parent has infinete objective function value. Falling back to the normal calculation method.")
+            #println("Parent has infinete objective function value. Falling back to the normal calculation method.")
             fitness, objective_function, penalty = calculate_fitness(chromosome, environment.A, environment.s)
             new(environment, chromosome, fitness, objective_function, penalty)
         else
@@ -66,10 +66,10 @@ function calculate_objective_function(new_one_position::Int64, new_zero_position
     det_value = (1 + wZw) * (1 - rZr) + wZr^2
     #det_value = (1 + wZ * w) * (1 - r' * Z * r) + (wZ * r)^2
 
-    println("det_value ", det_value)
+    #println("det_value >>>>>>>>>>>>>>>>>>>>> ", det_value)
     
-    if det_value > 0
-        println("new method's det > 0, ", det_value, ", log of that: ", log(det_value), " previous current cost", current_cost)
+    if det_value > 1.0e-10
+        #println("new method's det > 0, ", det_value, ", log of that: ", log(det_value), " previous current cost", current_cost)
         new_cost = current_cost + log(det_value)
         det_sign = 1
     end
@@ -77,9 +77,9 @@ function calculate_objective_function(new_one_position::Int64, new_zero_position
     #end
 
     # updating Z
-    Y = Z - (wZ' * wZ) / (1 + wZ * w)
+    Y = Z - (wZ' * wZ) / (1 + dot(wZ, w))
     rY = r' * Y;
-    new_Z = Y + (rY' * rY) / (1 - rY * r)
+    new_Z = Y + (rY' * rY) / (1 - dot(rY, r))
     
     return new_cost, new_Z, det_sign
 end
@@ -96,9 +96,9 @@ end
 function calculate_fitness(chromosome, A, s)
     num_ones = sum(chromosome)
     objective_function = ldet(A'*spdiagm(vec(chromosome))*A);
-    println("det normal fitness ", det(A'*spdiagm(vec(chromosome))*A))
+    #println("det normal fitness ", det(A'*spdiagm(vec(chromosome))*A))
     #println("log of det, normal fitness ", log(det(A'*spdiagm(vec(chromosome))*A)))
-    println(objective_function)
+    #println(objective_function)
     penalty = - 100 * abs(num_ones - s)
     fitness = objective_function + penalty
     #println(chromosome)
@@ -114,7 +114,7 @@ function calculate_fitness(chromosome::Vector{Int64}, A::Matrix{Float64}, s::Int
     num_pairs = length(new_ones)
     count_iterations = 0
 
-    println((new_ones, chromosome[new_ones[1]], parent.chromosome[new_ones[1]], new_zeros, chromosome[new_zeros[1]], parent.chromosome[new_zeros[1]], num_pairs))
+    #println((new_ones, chromosome[new_ones[1]], parent.chromosome[new_ones[1]], new_zeros, chromosome[new_zeros[1]], parent.chromosome[new_zeros[1]], num_pairs))
 
     for i in 1:num_pairs
         enqueue!(pairs, i)
@@ -124,10 +124,10 @@ function calculate_fitness(chromosome::Vector{Int64}, A::Matrix{Float64}, s::Int
         count_iterations += 1
         i = dequeue!(pairs)
         _objective_function, _Z, det_sign = calculate_objective_function(new_ones[i], new_zeros[i], objective_function, Z, A)
-        println("OF ", _objective_function, " sign ", det_sign)
+        #println("OF ", _objective_function, " sign ", det_sign)
 
         if det_sign < 0
-            println("Sign < 0")
+            #println("Sign < 0")
             if length(pairs) == 0
                 objective_function = -Inf
                 Z = nothing
@@ -135,7 +135,7 @@ function calculate_fitness(chromosome::Vector{Int64}, A::Matrix{Float64}, s::Int
                 if count_iterations <= num_pairs
                     enqueue!(pairs, i)
                 else
-                    println("Infinte objective function value. Falling back to the normal calculation method.")
+                    #println("Infinte objective function value. Falling back to the normal calculation method.")
                     fitness, objective_function, penalty = calculate_fitness(chromosome, A, s)
                     return fitness, objective_function, penalty, nothing
                 end

@@ -8,6 +8,7 @@ include("initialization.jl")
 include("selection.jl")
 include("mutation.jl")
 include("crossover.jl")
+include("adaptation.jl")
 include("genetic_algorithm.jl")
 
 function main()
@@ -42,7 +43,10 @@ function main()
         0.9, # crossover_probability
         [], # crossover_params
         0.3, # elite_size
-        0.5 # offspring_size
+        0.5, # offspring_size
+        "reset", # adaptation_method | accepts "none" and "reset"
+        [],
+        500
     )
 
     ga = GeneticAlgorithm(environment)
@@ -54,8 +58,9 @@ function main()
     println(results[1].fitness)
     println(results[1].chromosome)
 
-    p = plot(1:size(solutions, 1), solutions)
-    savefig(p, "plot.png") 
+    savefig(plot(1:size(solutions, 1), solutions), "plot.png") 
+    savefig(plot(1:length(ga.population_fitness_avg), ga.population_fitness_avg), "avg.png") 
+    savefig(plot(1:length(ga.population_fitness_std), ga.population_fitness_std), "std.png") 
     #println("Best fitness ", results[1].fitness)
     #println("Best solution ", results[1].chromosome)
 end

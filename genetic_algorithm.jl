@@ -1,5 +1,6 @@
 using Random
 using Dates
+using Statistics
 
 #include("individual.jl")
 
@@ -9,7 +10,10 @@ mutable struct GeneticAlgorithm
     offspring_size::Int64
     best_solution::Float64
     best_solution_tracking::Vector{Float64}
+    best_solution_change_or_adaptation_performed::Int64
     elite::Vector{Individual}
+    population_fitness_avg::Vector{Float64}
+    population_fitness_std::Vector{Float64}
 
     function GeneticAlgorithm(environment::Environment)
         #set seed
@@ -20,6 +24,8 @@ mutable struct GeneticAlgorithm
         bestsolution = -Inf
         elite = Vector{Individual}()
         best_solution_tracking = Vector{Float64}()
+        population_fitness_avg = Vector{Float64}()
+        population_fitness_std = Vector{Float64}()
 
         # populate struct variables
         new(
@@ -28,7 +34,10 @@ mutable struct GeneticAlgorithm
             offspringsize,
             bestsolution,
             best_solution_tracking,
-            elite
+            1,
+            elite,
+            population_fitness_avg,
+            population_fitness_std
         )
 
     end
@@ -72,21 +81,9 @@ function loop(ga::GeneticAlgorithm)
         population = [population; children]
         sort!(population, by = v -> v.fitness, rev = true)
 
-        #=
-        num_infs = 0
-        num_zundef = 0
-        for individual in population
-            if isinf(individual.objective_function)
-                num_infs += 1
-            end
-            if !isdefined(individual, :Z_matrix)
-                num_zundef += 1
-            end
-        end
-        =#
-
         if population[1].fitness > ga.best_solution
             ga.best_solution = population[1].fitness
+            ga.best_solution_change_or_adaptation_performed = generation
         end
 
         push!(ga.best_solution_tracking, ga.best_solution)
@@ -98,6 +95,21 @@ function loop(ga::GeneticAlgorithm)
         population = [ga.elite; commoners]
 
         push!(iter_times, get_time_in_ms().value - iter_start_time.value)
+
+        population_fitness = [individual.fitness for individual in population]
+        push!(ga.population_fitness_avg, mean(population_fitness))
+        push!(ga.population_fitness_avg, std(population_fitness))
+
+        if ga.environment.adaptation_method != "none"
+            # checks if it is time to adapt
+            if (generation - ga.best_solution_change_or_adaptation_performed) > ga.environment.generations_until_adaptation
+                println("Performing adaptation in generation ", generation) 
+                population = adapt(ga.environment, ga.elite)
+                ga.best_solution_change_or_adaptation_performed = generation
+            end
+
+            
+        end
 
         #println("Num. infs: ", num_infs)
         #println("Num. Z_matrix undef: ", num_zundef)

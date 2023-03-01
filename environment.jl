@@ -22,4 +22,7 @@ mutable struct Environment
     crossover_params::Vector{Any}
     elite_size::Float64
     offspring_size::Float64
+    adaptation_method::String
+    adaptation_params::Vector{Any}
+    generations_until_adaptation::Int64
 end

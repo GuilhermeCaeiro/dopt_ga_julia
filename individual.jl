@@ -27,7 +27,18 @@ mutable struct Individual
 
         if !isdefined(parent, :Z_matrix) || isnothing(parent.Z_matrix)
             #println("UNDEFINED!!!!!!!!!!!!!!!!!!")
-            parent.Z_matrix = inv(environment.A' * diagm(parent.chromosome) * environment.A)
+            try
+                parent.Z_matrix = inv(environment.A' * diagm(parent.chromosome) * environment.A)
+
+            catch e
+                if isa(e, SingularException)
+                    println("Matrix (environment.A' * diagm(parent.chromosome) * environment.A) is singular. Falling back to the normal calculation method.")
+                    fitness, objective_function, penalty = calculate_fitness(chromosome, environment.A, environment.s)
+                    return new(environment, chromosome, fitness, objective_function, penalty)
+                else
+                    throw(e)
+                end
+            end
         end
 
         if isinf(parent.objective_function)

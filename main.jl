@@ -23,7 +23,7 @@ function main()
     environment = Environment(
         1, # seed
         "teste", # instance
-        10_000, # max_generations
+        10,#10_000, # max_generations
         60, # max_time
         100, # population_size
         n, # n
@@ -33,7 +33,7 @@ function main()
         "binary", # encoding 
         "binary_random", # initialization_method
         [], # initialization_params
-        "roulette", # selecion_method
+        "ranking", # selecion_method
         "fullyrandom", # parent_selection_method
         [], # selection_params
         "binary_singlepoint", # mutation_method
@@ -55,12 +55,14 @@ function main()
 
     println("Num. generations: ", environment.max_generations, " Total Time: ", get_time_in_ms() - start_time)
     
-    println(results[1].fitness)
+    println("Fitness: ", results[1].fitness, " Objective Function: ", results[1].objective_function, " Penalty: ", results[1].penalty)
     println(results[1].chromosome)
 
     savefig(plot(1:size(solutions, 1), solutions), "plot.png") 
     savefig(plot(1:length(ga.population_fitness_avg), ga.population_fitness_avg), "avg.png") 
     savefig(plot(1:length(ga.population_fitness_std), ga.population_fitness_std), "std.png") 
+    savefig(plot(1:length(ga.population_fitness_avg_last_n_generations), ga.population_fitness_avg_last_n_generations), "avg_last_n.png") 
+    savefig(plot(1:length(ga.population_fitness_std_last_n_generations), ga.population_fitness_std_last_n_generations), "avg_std_last_n.png")
     #println("Best fitness ", results[1].fitness)
     #println("Best solution ", results[1].chromosome)
 end

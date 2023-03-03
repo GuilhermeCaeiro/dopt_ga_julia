@@ -22,13 +22,15 @@ end
 
 # TODO improve
 function ranking(individuals::Vector{Individual}, num_individuals::Integer)
-    weights = Vector{Integer}()
+    weights = Vector{Float64}()
+    total_individuals = length(individuals)
+    selection_pressure = 1.5
 
-    for i in reverse(1:size(individuals, 1))
-        push!(weights, i)
+    for i in 1:total_individuals
+        push!(weights, 1/total_individuals * (selection_pressure - (2 * selection_pressure - 2) * ((i - 1)/(total_individuals - 1))) )
     end
     
-    indices = sample(1:size(individuals, 1), Weights(weights), num_individuals, replace=false)
+    indices = sample(reverse(1:total_individuals), Weights(weights), num_individuals, replace=false)
     return individuals[indices]
 end
 

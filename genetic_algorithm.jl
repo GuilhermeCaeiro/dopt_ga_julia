@@ -14,6 +14,8 @@ mutable struct GeneticAlgorithm
     elite::Vector{Individual}
     population_fitness_avg::Vector{Float64}
     population_fitness_std::Vector{Float64}
+    population_fitness_avg_last_n_generations::Vector{Float64}
+    population_fitness_std_last_n_generations::Vector{Float64}
 
     function GeneticAlgorithm(environment::Environment)
         #set seed
@@ -26,6 +28,8 @@ mutable struct GeneticAlgorithm
         best_solution_tracking = Vector{Float64}()
         population_fitness_avg = Vector{Float64}()
         population_fitness_std = Vector{Float64}()
+        population_fitness_avg_last_n_generations = Vector{Float64}()
+        population_fitness_std_last_n_generations = Vector{Float64}()
 
         # populate struct variables
         new(
@@ -37,7 +41,9 @@ mutable struct GeneticAlgorithm
             1,
             elite,
             population_fitness_avg,
-            population_fitness_std
+            population_fitness_std,
+            population_fitness_avg_last_n_generations,
+            population_fitness_std_last_n_generations
         )
 
     end
@@ -98,7 +104,16 @@ function loop(ga::GeneticAlgorithm)
 
         population_fitness = [individual.fitness for individual in population]
         push!(ga.population_fitness_avg, mean(population_fitness))
-        push!(ga.population_fitness_avg, std(population_fitness))
+        push!(ga.population_fitness_std, std(population_fitness))
+
+
+        start_position = 1
+        if generation > ga.environment.generations_until_adaptation
+            start_position = generation - ga.environment.generations_until_adaptation
+        end
+        
+        push!(ga.population_fitness_avg_last_n_generations, mean(ga.population_fitness_avg[start_position:end]))
+        push!(ga.population_fitness_std_last_n_generations, std(ga.population_fitness_std[start_position:end]))
 
         if ga.environment.adaptation_method != "none"
             # checks if it is time to adapt
@@ -107,8 +122,6 @@ function loop(ga::GeneticAlgorithm)
                 population = adapt(ga.environment, ga.elite)
                 ga.best_solution_change_or_adaptation_performed = generation
             end
-
-            
         end
 
         #println("Num. infs: ", num_infs)

@@ -11,6 +11,8 @@ include("crossover.jl")
 include("adaptation.jl")
 include("genetic_algorithm.jl")
 
+global current_generation = 0
+
 function main()
     println("Starting GA.")
     Random.seed!(0)
@@ -23,7 +25,7 @@ function main()
     environment = Environment(
         1, # seed
         "teste", # instance
-        10,#10_000, # max_generations
+        1000,#10_000, # max_generations
         60, # max_time
         100, # population_size
         n, # n
@@ -65,6 +67,8 @@ function main()
     savefig(plot(1:length(ga.population_fitness_std_last_n_generations), ga.population_fitness_std_last_n_generations), "avg_std_last_n.png")
     #println("Best fitness ", results[1].fitness)
     #println("Best solution ", results[1].chromosome)
+
+    println("current_generation", current_generation)
 end
 
 main()

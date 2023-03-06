@@ -202,9 +202,11 @@ function calculate_fitness(chromosome::Vector{Int64}, A::Matrix{Float64}, s::Int
             Z = _Z
 
             if objective_function > extra_objfunc
-                extra_Z = deepcopy(_Z)
-                extra_chromosome = deepcopy(actual_chromosome)
-                # extra_objfunc = deepcopy(_objective_function)
+                if parent.environment.perform_prlike_crossover
+                    extra_Z = deepcopy(_Z)
+                    extra_chromosome = deepcopy(actual_chromosome)
+                    extra_objfunc = deepcopy(_objective_function)
+                end
             end
         end
 

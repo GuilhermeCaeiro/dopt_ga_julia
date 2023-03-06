@@ -48,7 +48,8 @@ function main()
         0.5, # offspring_size
         "none", # adaptation_method | accepts "none" and "reset"
         [],
-        500
+        500,
+        true, # perform path-relinking-like crossover
     )
 
     ga = GeneticAlgorithm(environment)

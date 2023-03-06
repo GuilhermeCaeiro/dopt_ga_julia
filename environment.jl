@@ -25,4 +25,5 @@ mutable struct Environment
     adaptation_method::String
     adaptation_params::Vector{Any}
     generations_until_adaptation::Int64
+    perform_prlike_crossover::Bool
 end

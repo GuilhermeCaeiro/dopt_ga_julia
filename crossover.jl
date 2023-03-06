@@ -62,7 +62,7 @@ function binary_mask(chromosome1::Vector{Int64}, chromosome2::Vector{Int64}, num
 
     offspring1 = zeros(Int64, chromosome_size)
     offspring2 = zeros(Int64, chromosome_size)
-
+    
     offspring1[sample(ones, num_ones, replace=false)] .= 1
     offspring2[sample(ones, num_ones, replace=false)] .= 1
 
@@ -84,7 +84,7 @@ function breed(environment::Environment, parent1::Individual, parent2::Individua
         #offspring = [Individual(environment, chromosome1), Individual(environment, chromosome2)]
     elseif environment.crossover_method == "binary_mask"
         #println("type of chromosome: ", typeof(parent1.chromosome))
-        chromosome1, chromosome2 = binary_mask(parent1.chromosome, parent2.chromosome, environment.s)
+        chromosome1, chromosome2 = binary_mask(p1_chromosome, p2_chromosome, environment.s)
         #offspring = [Individual(environment, chromosome1), Individual(environment, chromosome2)]
     else
         throw(error("Uknown crossover method ", environment.crossover_method))
@@ -128,7 +128,13 @@ function breed(environment::Environment, parent1::Individual, parent2::Individua
         new_zeros_offs2 = findall(x -> x == 1, differ_par1_offs2)
     end
 
-    offspring = [Individual(environment, chromosome1, parent_offs1, new_ones_offs1, new_zeros_offs1), Individual(environment, chromosome2, parent_offs2, new_ones_offs2, new_zeros_offs2)]
+    
+
+    offspring = Vector{Individual}()
+    ind1 = Individual(environment, chromosome1, parent_offs1, new_ones_offs1, new_zeros_offs1)
+    ind2 = Individual(environment, chromosome2, parent_offs2, new_ones_offs2, new_zeros_offs2)
+    offspring = [offspring; ind1; ind2]
+
     return offspring
 end
 

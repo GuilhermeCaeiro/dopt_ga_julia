@@ -46,7 +46,7 @@ mutable struct Individual
             fitness, objective_function, penalty = calculate_fitness(chromosome, environment.A, environment.s)
             new(environment, chromosome, fitness, objective_function, penalty)
         else
-            fitness, objective_function, penalty, Z = calculate_fitness(
+            fitness, objective_function, penalty, Z, extra_chromosome, extra_fitness, extra_objfunc, extra_penalty, extra_Z = calculate_fitness(
                 chromosome, 
                 environment.A, 
                 environment.s,
@@ -54,8 +54,11 @@ mutable struct Individual
                 new_ones,
                 new_zeros
             )
-
-            new(environment, chromosome, fitness, objective_function, penalty, Z)
+            if isfinite(extra_fitness)
+                return [new(environment, chromosome, fitness, objective_function, penalty, Z), new(environment, extra_chromosome, extra_fitness, extra_objfunc, extra_penalty, extra_Z)]
+            else
+                return new(environment, chromosome, fitness, objective_function, penalty, Z)
+            end
         end
 
         
@@ -142,6 +145,13 @@ function calculate_fitness(chromosome::Vector{Int64}, A::Matrix{Float64}, s::Int
     Z = deepcopy(parent.Z_matrix)
     objective_function = deepcopy(parent.objective_function)
     det_sign = nothing
+    
+    actual_chromosome = deepcopy(parent.chromosome)
+    extra_chromosome = nothing
+    extra_fitness = -Inf
+    extra_objfunc = deepcopy(parent.objective_function)
+    extra_penalty = 0
+    extra_Z = nothing
 
     pairs = Queue{Int64}()
     num_pairs = length(new_ones)
@@ -163,6 +173,8 @@ function calculate_fitness(chromosome::Vector{Int64}, A::Matrix{Float64}, s::Int
     while length(pairs) > 0
         count_iterations += 1
         i = dequeue!(pairs)
+        actual_chromosome[new_ones[i]] = 1
+        actual_chromosome[new_zeros[i]] = 0
         _objective_function, _Z, det_sign = calculate_objective_function(new_ones[i], new_zeros[i], objective_function, Z, A)
         #println("OF ", _objective_function, " sign ", det_sign)
 
@@ -176,15 +188,24 @@ function calculate_fitness(chromosome::Vector{Int64}, A::Matrix{Float64}, s::Int
                 if count_iterations <= num_pairs
                     #println("Pair ", new_ones[i], " ", new_zeros[i], " sent to de end of of the queue.")
                     enqueue!(pairs, i)
+                    actual_chromosome[new_ones[i]] = 0
+                    actual_chromosome[new_zeros[i]] = 1
                 else
                     #println("Infinte objective function value. Falling back to the normal calculation method.")
                     fitness, objective_function, penalty = calculate_fitness(chromosome, A, s)
-                    return fitness, objective_function, penalty, nothing
+                    Z = nothing
+                    break
                 end
             end
         else
             objective_function = _objective_function
             Z = _Z
+
+            if objective_function > extra_objfunc
+                extra_Z = deepcopy(_Z)
+                extra_chromosome = deepcopy(actual_chromosome)
+                # extra_objfunc = deepcopy(_objective_function)
+            end
         end
 
         #if chromosome in seeked_chromosome
@@ -210,9 +231,15 @@ function calculate_fitness(chromosome::Vector{Int64}, A::Matrix{Float64}, s::Int
         println("0-1 pairs: ", length(new_ones))
     end
 
-    num_ones = sum(chromosome)
-    penalty = - 100 * abs(num_ones - s)
+    penalty = - 100 * abs(sum(chromosome) - s)
     fitness = objective_function + penalty
 
-    return fitness, objective_function, penalty, Z
+    if extra_objfunc > parent.objective_function
+        extra_penalty = - 100 * abs(sum(extra_chromosome) - s)
+        extra_fitness = extra_objfunc + extra_penalty
+    else
+        extra_fitness = -Inf
+    end 
+
+    return fitness, objective_function, penalty, Z, extra_chromosome, extra_fitness, extra_objfunc, extra_penalty, extra_Z
 end

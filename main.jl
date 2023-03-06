@@ -8,7 +8,7 @@ include("initialization.jl")
 include("selection.jl")
 include("mutation.jl")
 include("crossover.jl")
-include("adaptation.jl")
+# include("adaptation.jl")
 include("genetic_algorithm.jl")
 
 global current_generation = 0
@@ -41,12 +41,12 @@ function main()
         "binary_singlepoint", # mutation_method
         0.1, # mutation_probability
         [], # mutation_params
-        "binary_mask", # crossover_method
+        "binary_singlepoint", # crossover_method
         0.9, # crossover_probability
         [], # crossover_params
         0.3, # elite_size
         0.5, # offspring_size
-        "reset", # adaptation_method | accepts "none" and "reset"
+        "none", # adaptation_method | accepts "none" and "reset"
         [],
         500
     )
@@ -58,7 +58,8 @@ function main()
     println("Num. generations: ", environment.max_generations, " Total Time: ", get_time_in_ms() - start_time)
     
     println("Fitness: ", results[1].fitness, " Objective Function: ", results[1].objective_function, " Penalty: ", results[1].penalty)
-    println(results[1].chromosome)
+    println("Best chromosome, with ", sum(results[1].chromosome), " ones :", results[1].chromosome)
+    println("Original fitness calculation: ", calculate_fitness(results[1].chromosome, environment.A, environment.s))
 
     savefig(plot(1:size(solutions, 1), solutions), "plot.png") 
     savefig(plot(1:length(ga.population_fitness_avg), ga.population_fitness_avg), "avg.png") 

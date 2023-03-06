@@ -70,7 +70,7 @@ function loop(ga::GeneticAlgorithm)
         #println("Iteration ", generation, " Pop. size ", length(population))
         
         children = Vector{Individual}()
-        
+
         # crossover and mutation
         while size(children, 1) < ga.offspring_size
             if rand(Float64, 1)[1] < ga.environment.crossover_probability
@@ -100,7 +100,7 @@ function loop(ga::GeneticAlgorithm)
         #println("ga.elite_size ", ga.elite_size)
         ga.elite = population[1:ga.elite_size]
         commoners = population[(ga.elite_size + 1):end]
-        commoners = select(ga.environment, commoners, ga.environment.population_size - size(ga.elite)[1], ga.environment.selecion_method)
+        commoners = select(ga.environment, commoners, ga.environment.population_size - ga.elite_size, ga.environment.selecion_method)
         population = [ga.elite; commoners]
 
         println("Iteration: ", generation, " Pop. size: ", length(population), " Best Sol.: ", population[1].objective_function)#, " Chromosome: ", population[1].chromosome)

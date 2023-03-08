@@ -7,7 +7,6 @@ function binary_random(environment::Environment)
         chromosome = zeros(Int64, environment.n)
         indices = sample(1:environment.n, environment.s, replace=false)
         chromosome[indices] .= 1
-        #println(chromosome)
         individual = Individual(environment, chromosome)
         
         push!(population, individual)
@@ -17,7 +16,6 @@ function binary_random(environment::Environment)
 end
 
 function binary_biased(environment::Environment, min_diff)
-    #println(("binary_biased", min_diff))
     chromosomes = Vector{Vector{Int64}}()
     
     while size(chromosomes, 1) < environment.population_size

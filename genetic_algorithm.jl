@@ -52,11 +52,8 @@ end
 
 function loop(ga::GeneticAlgorithm)
     # Initialize population
-    #population = Vector{Individual}()
     population = initialize_population(ga.environment)
     iter_times = Vector{Int64}()
-    #num_infs = 0
-    #num_zundef = 0
 
     # runs generations
     for generation in 1:ga.environment.max_generations
@@ -65,15 +62,12 @@ function loop(ga::GeneticAlgorithm)
 
         sort!(population, by = v -> v.fitness, rev = true)
 
-        #println("Iteration ", generation, " Pop. size ", length(population))
-        
         children = Vector{Individual}()
 
         # crossover and mutation
         while size(children, 1) < ga.offspring_size
             if rand(Float64, 1)[1] < ga.environment.crossover_probability
                 parents = select(ga.environment, population, 2, ga.environment.parent_selection_method)
-                #print(methods(breed))
                 offspring = breed(ga.environment, parents[1], parents[2])
                 children = [children; offspring]
             end
@@ -95,7 +89,6 @@ function loop(ga::GeneticAlgorithm)
 
         push!(ga.best_solution_tracking, ga.best_solution)
 
-        #println("ga.elite_size ", ga.elite_size)
         ga.elite = population[1:ga.elite_size]
         commoners = population[(ga.elite_size + 1):end]
         commoners = select(ga.environment, commoners, ga.environment.population_size - ga.elite_size, ga.environment.selecion_method)
@@ -126,13 +119,6 @@ function loop(ga::GeneticAlgorithm)
                 ga.best_solution_change_or_adaptation_performed = generation
             end
         end
-
-        #println("Num. infs: ", num_infs)
-        #println("Num. Z_matrix undef: ", num_zundef)
-
-        #if generation == 20
-        #    break
-        #end
     end
 
     println("Avg. Time for ", ga.environment.max_generations, " iterations: ", mean(iter_times), " Min|Max: ", minimum(iter_times), " | ", maximum(iter_times))

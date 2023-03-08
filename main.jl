@@ -27,7 +27,7 @@ function main()
     environment = Environment(
         1, # seed
         "teste", # instance
-        10_000, # max_generations
+        1000, # max_generations
         60, # max_time
         100, # population_size
         n, # n

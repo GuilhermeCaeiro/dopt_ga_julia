@@ -8,10 +8,12 @@ end
 
 #
 function roulette(individuals::Vector{Individual}, num_individuals::Integer)
-    weights = [individual.fitness for individual in individuals]
+    weights = [individual.fitness != -Inf ? individual.fitness : 1e-20 for individual in individuals]
+    minval = abs(minimum(weights))+1
+    weights = [w != 1e-20 ? w + minval : 1e-20 for w in weights]
     nw = length(weights)
-    weights = 1e-20 .+ (1 ./ (1 .+ exp.(-weights)))
-    indices = sample(1:nw, Weights(weights), num_individuals, replace=false)
+    # weights = 1e-20 .+ (1 ./ (1 .+ exp.(-weights)))
+    indices = sample(1:nw, ProbabilityWeights(weights), num_individuals, replace=false)
     return individuals[indices]
 end
 

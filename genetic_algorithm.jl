@@ -62,9 +62,7 @@ function loop(ga::GeneticAlgorithm)
     for generation in 1:ga.environment.max_generations
         global current_generation = generation
         iter_start_time = get_time_in_ms()
-        if generation % 100 == 0
-            println("Generation ", generation)
-        end
+
         sort!(population, by = v -> v.fitness, rev = true)
 
         #println("Iteration ", generation, " Pop. size ", length(population))
@@ -103,7 +101,7 @@ function loop(ga::GeneticAlgorithm)
         commoners = select(ga.environment, commoners, ga.environment.population_size - ga.elite_size, ga.environment.selecion_method)
         population = [ga.elite; commoners]
 
-        println("Iteration: ", generation, " Pop. size: ", length(population), " Best Sol.: ", population[1].objective_function)#, " Chromosome: ", population[1].chromosome)
+        println("Iteration: ", generation, " Pop. size: ", length(population), " Best Sol.: ", population[1].objective_function, " Avg Sol.: ", mean(x-> x.fitness, population), " Std Sol.: ", std([x.fitness for x in population]))
 
         push!(iter_times, get_time_in_ms().value - iter_start_time.value)
 

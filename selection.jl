@@ -8,15 +8,10 @@ end
 
 #
 function roulette(individuals::Vector{Individual}, num_individuals::Integer)
-    weights = Vector{Float64}()
-
-    for i in 1:size(individuals, 1)
-        push!(weights, individuals[i].fitness)
-    end
-
-    weights = 1 ./ (1 .+ exp.(-weights))
-    
-    indices = sample(1:size(individuals, 1), Weights(weights), num_individuals, replace=false)
+    weights = [individual.fitness for individual in individuals]
+    nw = length(weights)
+    weights = 1e-20 .+ (1 ./ (1 .+ exp.(-weights)))
+    indices = sample(1:nw, Weights(weights), num_individuals, replace=false)
     return individuals[indices]
 end
 
@@ -30,7 +25,7 @@ function ranking(individuals::Vector{Individual}, num_individuals::Integer)
         push!(weights, 1/total_individuals * (selection_pressure - (2 * selection_pressure - 2) * ((i - 1)/(total_individuals - 1))) )
     end
     
-    indices = sample(reverse(1:total_individuals), Weights(weights), num_individuals, replace=false)
+    indices = sample(reverse(1:total_individuals), Weights(weights, sum(weights)), num_individuals, replace=false)
     return individuals[indices]
 end
 

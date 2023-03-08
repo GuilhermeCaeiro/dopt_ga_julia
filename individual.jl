@@ -222,16 +222,16 @@ function calculate_fitness(chromosome::Vector{Int64}, A::Matrix{Float64}, s::Int
         #end"""
     end
 
-    reference_fitness, reference_of, reference_penalty = calculate_fitness(chromosome, A, s)
+    # reference_fitness, reference_of, reference_penalty = calculate_fitness(chromosome, A, s)
     
-    if (!isapprox(reference_of, objective_function, atol = 0.00001)) #&& chromosome in seeked_chromosome
-        println("Something went wrong! Result doesn't meet the reference.")
-        println(" objective_function ", objective_function, " determinant of OF ", exp(objective_function), " reference_OF ", reference_of)
-        println("chromosome ", chromosome)
-        println("parent chromosome ", parent.chromosome)
-        println("parent OF ", parent.objective_function)
-        println("0-1 pairs: ", length(new_ones))
-    end
+    # if (!isapprox(reference_of, objective_function, atol = 0.00001)) #&& chromosome in seeked_chromosome
+    #     println("Something went wrong! Result doesn't meet the reference.")
+    #     println(" objective_function ", objective_function, " determinant of OF ", exp(objective_function), " reference_OF ", reference_of)
+    #     println("chromosome ", chromosome)
+    #     println("parent chromosome ", parent.chromosome)
+    #     println("parent OF ", parent.objective_function)
+    #     println("0-1 pairs: ", length(new_ones))
+    # end
 
     penalty = - 100 * abs(sum(chromosome) - s)
     fitness = objective_function + penalty

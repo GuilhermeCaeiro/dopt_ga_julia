@@ -22,10 +22,12 @@ function main()
 
     start_time = get_time_in_ms()
 
+    println("Julia nthreads: ", Threads.nthreads())
+
     environment = Environment(
         1, # seed
         "teste", # instance
-        1000,#10_000, # max_generations
+        10_000, # max_generations
         60, # max_time
         100, # population_size
         n, # n
@@ -35,7 +37,7 @@ function main()
         "binary", # encoding 
         "binary_random", # initialization_method
         [], # initialization_params
-        "ranking", # selecion_method
+        "roulette", # selecion_method
         "fullyrandom", # parent_selection_method
         [], # selection_params
         "binary_singlepoint", # mutation_method
@@ -47,8 +49,8 @@ function main()
         0.3, # elite_size
         0.5, # offspring_size
         "none", # adaptation_method | accepts "none" and "reset"
-        [],
-        500,
+        [], # adaptation_params
+        500, # generations_until_adaptation
         true, # perform path-relinking-like crossover
     )
 

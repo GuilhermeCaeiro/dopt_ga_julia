@@ -18,6 +18,10 @@ mutable struct Individual
         new(environment, chromosome, fitness, objective_function, penalty)
     end
 
+    function Individual(environment::Environment, chromosome::Vector{Int64}, fitness::Float64, objective_function::Float64, penalty::Float64, Z_matrix::Matrix{Float64})
+        return new(environment, chromosome, fitness, objective_function, penalty, Z_matrix)
+    end
+
     function Individual(environment::Environment, chromosome::Vector{Int64}, parent::Individual, new_ones::Vector{Int64}, new_zeros::Vector{Int64})
         if length(new_ones) != length(new_zeros)
             throw(error("Attempt to create Individual with length(ones_changed) != length(zeros_changed). This might indicate that the current solution (chromosome) is unfeasible."))
@@ -67,7 +71,8 @@ function calculate_objective_function(new_one_position::Int64, new_zero_position
     r = A[new_zero_position, :]
     new_cost = -Inf
     det_sign = -1
-
+    new_Z = nothing
+    
     # calculating new cost
     wZ = w' * Z
     wZw = dot(wZ, w)

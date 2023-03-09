@@ -79,6 +79,15 @@ function loop(ga::GeneticAlgorithm)
             end
         end
 
+        # ======================================================
+        # SUGESTTION FOR ADAPTATION
+        # old_mutation_method = ga.environment.mutation_method
+        # ga.environment.mutation_method = "binary_search"
+        # mutant = mutate(ga.environment, population[1])
+        # children = [children; mutant]
+        # ga.environment.mutation_method = old_mutation_method
+        # ======================================================
+
         population = [population; children]
         sort!(population, by = v -> v.fitness, rev = true)
 

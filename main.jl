@@ -27,7 +27,7 @@ function main()
     environment = Environment(
         1, # seed
         "teste", # instance
-        1000, # max_generations
+        10_000, # max_generations
         60, # max_time
         100, # population_size
         n, # n
@@ -55,7 +55,9 @@ function main()
     )
 
     ga = GeneticAlgorithm(environment)
-    println(ga.environment.crossover_method)
+    # println(ga.environment.crossover_method)
+    # println(ga.environment.mutation_method)
+    # println(ga.environment.parent_selection_method)
     results, solutions = loop(ga)
 
     println("Num. generations: ", environment.max_generations, " Total Time: ", get_time_in_ms() - start_time)

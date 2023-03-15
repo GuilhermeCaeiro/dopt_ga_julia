@@ -55,9 +55,14 @@ function loop(ga::GeneticAlgorithm)
     population = initialize_population(ga.environment)
     iter_times = Vector{Int64}()
 
+    println("Post initialization stats: Conv. ->", execution_statistics["conventional_of_calc_calls"], " Effic. ->", execution_statistics["efficient_of_calc_calls"])
+
     # runs generations
     for generation in 1:ga.environment.max_generations
-        global current_generation = generation
+        execution_statistics["current_generation"] = generation
+        execution_statistics["conventional_of_calc_calls"][generation] = 0
+        execution_statistics["efficient_of_calc_calls"][generation] = 0
+        execution_statistics["parent_zcalc_from_children"][generation] = 0
         iter_start_time = get_time_in_ms()
 
         sort!(population, by = v -> v.fitness, rev = true)
@@ -103,7 +108,16 @@ function loop(ga::GeneticAlgorithm)
         commoners = select(ga.environment, commoners, ga.environment.population_size - ga.elite_size, ga.environment.selecion_method)
         population = [ga.elite; commoners]
 
-        println("Iteration: ", generation, " Pop. size: ", length(population), " Best Sol.: ", population[1].objective_function, " Avg Sol.: ", mean(x-> x.fitness, population), " Std Sol.: ", std([x.fitness for x in population]))
+        println(
+            "Iteration: ", generation, 
+            " Pop. size: ", length(population), 
+            " Best Sol.: ", population[1].objective_function, 
+            " Avg Sol.: ", mean(x-> x.fitness, population), 
+            " Std Sol.: ", std([x.fitness for x in population]), 
+            " Conventional OF: ", execution_statistics["conventional_of_calc_calls"][generation], 
+            " Efficient OF: ", execution_statistics["efficient_of_calc_calls"][generation],
+            " Par. Zcalc f/ children: ", execution_statistics["parent_zcalc_from_children"][generation]
+        )
 
         push!(iter_times, get_time_in_ms().value - iter_start_time.value)
 

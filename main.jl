@@ -37,7 +37,7 @@ function main()
         "binary", # encoding 
         "binary_random", # initialization_method
         [], # initialization_params
-        "roulette", # selecion_method
+        "fullyrandom", # selecion_method
         "fullyrandom", # parent_selection_method
         [], # selection_params
         "binary_singlepoint", # mutation_method

@@ -1,6 +1,8 @@
 using Random
 using Dates
 using Statistics
+using .Threads
+using Distributed
 
 #include("individual.jl")
 
@@ -81,46 +83,48 @@ function loop(ga::GeneticAlgorithm)
                 end
             end
         else
-            pending_reproductions = Vector{String}()
+            # pending_reproductions = Vector{Int64}()
 
-            # could be done in a better way
-            while length(pending_reproductions) < ga.offspring_size
-                if rand(Float64, 1)[1] < ga.environment.crossover_probability
-                    push!(pending_reproductions, "crossover")
+            # # could be done in a better way
+            # while sum(pending_reproductions) < ga.offspring_size
+            #     if rand(Float64, 1)[1] < ga.environment.crossover_probability
+            #         push!(pending_reproductions, 2) # crossover generates at least 2 children
+            #     end
+
+            #     if rand(Float64, 1)[1] < ga.environment.mutation_probability
+            #         push!(pending_reproductions, 1) # mutation generates at most 1 child      
+            #     end
+            # end
+            
+            # lk = ReentrantLock()
+            # Threads.@threads for i = 1:length(pending_reproductions)
+            #     if pending_reproductions[i] == 2
+            #         parents = select(ga.environment, population, 2, ga.environment.parent_selection_method)
+            #         lock(lk) do
+            #             children = [children; breed(ga.environment, parents[1], parents[2])]
+            #         end
+            #     elseif pending_reproductions[i] == 1
+            #         somebody = select(ga.environment, population, 1, ga.environment.parent_selection_method)
+            #         lock(lk) do
+            #             children = [children; mutate(ga.environment, somebody[1])]
+            #         end
+            #     else
+            #         throw(error("Something went wrong."))
+            #     end
+            # end
+            while length(children) < ga.offspring_size
+                offspring = pmap(1:ga.offspring_size-length(children)) do i
+                    if rand(Float64, 1)[1] < ga.environment.crossover_probability
+                        parents = select(ga.environment, population, 2, ga.environment.parent_selection_method)
+                        return breed(ga.environment, parents[1], parents[2])
+                    elseif rand(Float64, 1)[1] < ga.environment.mutation_probability
+                        somebody = select(ga.environment, population, 1, ga.environment.parent_selection_method)
+                        return mutate(ga.environment, somebody[1])
+                    end
                 end
-
-                if rand(Float64, 1)[1] < ga.environment.mutation_probability
-                    push!(pending_reproductions, "mutation")      
-                end
-            end
-
-            temp_vector = Vector{Individual}(undef, length(pending_reproductions) * 2)
-
-            Threads.@threads for i = 1:2:length(temp_vector)
-                pending_reproductions_idx = convert(Int64, ceil(i/2))
-
-                if pending_reproductions[pending_reproductions_idx] == "crossover"
-                    parents = select(ga.environment, population, 2, ga.environment.parent_selection_method)
-                    # TODO prevent the next line from falling into a race condition or deadlock situation, 
-                    # which may arise from trying to write to the variable Z_matrix of a parent.
-                    offspring = breed(ga.environment, parents[1], parents[2])
-                    #children = [children; offspring]
-                    temp_vector[i] = offspring[1]
-                    temp_vector[i + 1] = offspring[2]
-                elseif pending_reproductions[pending_reproductions_idx] == "mutation"
-                    somebody = select(ga.environment, population, 1, ga.environment.parent_selection_method)
-                    # TODO the same rance condition or deadlock situation may arise here too.
-                    mutant = mutate(ga.environment, somebody[1])
-                    #children = [children; mutant]
-                    temp_vector[i] = mutant
-                else
-                    throw(error("Something went wrong."))
-                end
-            end
-
-            for i in 1:length(temp_vector)
-                if isassigned(temp_vector, i)
-                   push!(children, temp_vector[i])
+                offspring = offspring[findall(x-> !isnothing(x), offspring)]
+                for i in offspring
+                    children = [children; i]
                 end
             end
         end
@@ -149,7 +153,9 @@ function loop(ga::GeneticAlgorithm)
         commoners = select(ga.environment, commoners, ga.environment.population_size - ga.elite_size, ga.environment.selecion_method)
         population = [ga.elite; commoners]
 
-        println("Iteration: ", generation, " Pop. size: ", length(population), " Best Sol.: ", population[1].objective_function, " Avg Sol.: ", mean(x-> x.fitness, population), " Std Sol.: ", std([x.fitness for x in population]))
+        if generation % 100 == 0
+            println("Iteration: ", generation, " Pop. size: ", length(population), " Best Sol.: ", population[1].objective_function, " Avg Sol.: ", mean(x-> x.fitness, population), " Std Sol.: ", std([x.fitness for x in population]))
+        end
 
         push!(iter_times, get_time_in_ms().value - iter_start_time.value)
 

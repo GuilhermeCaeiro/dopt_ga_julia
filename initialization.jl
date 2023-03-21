@@ -59,20 +59,26 @@ end
 
 function binary_guided(environment::Environment)
 
-    chromosomes = Vector{Vector{Int64}}()
     R = map(Int64, environment.R)
     m, n = size(environment.A)
     s = environment.s
     U, = svd(environment.A; full=true)
     x_bar = vec(sum(U .^ 2; dims = 2))   
     x_bar[R] .= 0.0
-
-    for i::Int64 in 1:environment.population_size
-        x = zeros(m)
-        x[R] .= 1.0 # choose independent rows
-        phi = partialsortperm(x_bar, (1:s-n); rev = true)
-        x[phi] .= 1.0
-        push!(chromosomes, deepcopy(x))
+    chromosomes = Vector{Vector{Int64}}(undef, environment.population_size)
+    x = zeros(m)
+    x[R] .= 1.0 # choose independent rows
+    phi = partialsortperm(x_bar, (1:s-n); rev = true)
+    x[phi] .= 1.0
+    zeros_idx = findall(x .== 0.0)
+    ones_idx = findall(x .== 1.0)
+    changes = Int(floor(m / 10))
+    chromosomes[1] = deepcopy(x)
+    for i in 2:environment.population_size
+        _x = deepcopy(x)
+        _x[sample(zeros_idx, changes, replace = false)] .= 1.0
+        _x[sample(ones_idx, changes, replace = false)] .= 0.0
+        chromosomes[i] = deepcopy(_x)
     end
 
     return [Individual(environment, chromosome) for chromosome in chromosomes]

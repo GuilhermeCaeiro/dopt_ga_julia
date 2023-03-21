@@ -11,7 +11,12 @@ include("crossover.jl")
 # include("adaptation.jl")
 include("genetic_algorithm.jl")
 
-global current_generation = 0
+global execution_statistics = Dict(
+    "current_generation" => 0,
+    "conventional_of_calc_calls" => Dict(0 => 0),
+    "efficient_of_calc_calls" => Dict(0 => 0),
+    "parent_zcalc_from_children" => Dict(0 => 0),
+)
 
 function main()
     println("Starting GA.")
@@ -27,7 +32,7 @@ function main()
     environment = Environment(
         1, # seed
         "teste", # instance
-        10_000, # max_generations
+        1000, # max_generations
         60, # max_time
         100, # population_size
         n, # n
@@ -36,7 +41,7 @@ function main()
         A, # A
         "binary_random", # initialization_method
         [], # initialization_params
-        "roulette", # selecion_method
+        "ranking", # selecion_method
         [], # selection_params
         "fullyrandom", # parent_selection_method
         [], # parent_selection_params
@@ -74,7 +79,12 @@ function main()
     #println("Best fitness ", results[1].fitness)
     #println("Best solution ", results[1].chromosome)
 
-    println("current_generation", current_generation)
+    #println("current_generation", current_generation)
+    println(
+        "Total calls to conventional FO method: ", sum(values(execution_statistics["conventional_of_calc_calls"])), 
+        " Total calls to efficient FO method: ", sum(values(execution_statistics["efficient_of_calc_calls"])),
+        " Total parent Z_matrix calculations from children: ", sum(values(execution_statistics["parent_zcalc_from_children"]))
+    )
 end
 
 main()

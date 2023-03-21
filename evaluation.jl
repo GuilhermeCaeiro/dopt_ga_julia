@@ -91,7 +91,7 @@ function write_header(additional_results_fields)
 
     for field in fieldnames(Environment)
         sfield = string(field)
-        if sfield == "A"
+        if sfield in ["A", "R"]
             continue
         end
         header_line = header_line * string(field) * ";"
@@ -129,7 +129,7 @@ function write_result(environment::Environment, results::Vector{Individual}, tot
     for field in fieldnames(Environment)
         sfield = string(field)
         #println(field, typeof(field))
-        if sfield == "A"
+        if sfield in ["A", "R"]
             #println("Ignoring A")
             continue
         end

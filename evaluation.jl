@@ -188,6 +188,14 @@ function main()
         start_time = get_time_in_ms()
 
         Random.seed!(environment.seed)
+        
+        global execution_statistics = Dict(
+            "current_generation" => 0,
+            "conventional_of_calc_calls" => Dict(0 => 0),
+            "efficient_of_calc_calls" => Dict(0 => 0),
+            "parent_zcalc_from_children" => Dict(0 => 0),
+        )
+        
         ga = GeneticAlgorithm(environment)
         results, solutions = loop(ga)
 

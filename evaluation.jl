@@ -59,11 +59,10 @@ function read_setup(setup_file)
         experiment["adaptation_method"] = _experiment[15]
         experiment["generations_until_adaptation"] = _experiment[16]
         experiment["perform_prlike_crossover"] = _experiment[17]
-        
+
         push!(experiments, experiment)
     end
-
-    return experiments
+    return [deepcopy(experiment) for experiment in experiments for i in 1:Int(experiment_setup["replicates"][1])]
 end
 
 function retrieve_additional_params(experiment)

@@ -34,12 +34,12 @@ function main()
         m, # m
         s, # s
         A, # A
-        "binary", # encoding 
         "binary_random", # initialization_method
         [], # initialization_params
         "roulette", # selecion_method
-        "fullyrandom", # parent_selection_method
         [], # selection_params
+        "fullyrandom", # parent_selection_method
+        [], # parent_selection_params
         "binary_singlepoint", # mutation_method
         0.1, # mutation_probability
         [], # mutation_params

@@ -100,7 +100,7 @@ function loop(ga::GeneticAlgorithm)
 
         ga.elite = population[1:ga.elite_size]
         commoners = population[(ga.elite_size + 1):end]
-        commoners = select(ga.environment, commoners, ga.environment.population_size - ga.elite_size, ga.environment.selecion_method)
+        commoners = select(ga.environment, commoners, ga.environment.population_size - ga.elite_size, ga.environment.selection_method)
         population = [ga.elite; commoners]
 
         println("Iteration: ", generation, " Pop. size: ", length(population), " Best Sol.: ", population[1].objective_function, " Avg Sol.: ", mean(x-> x.fitness, population), " Std Sol.: ", std([x.fitness for x in population]))

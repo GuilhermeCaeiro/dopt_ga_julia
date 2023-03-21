@@ -8,12 +8,12 @@ mutable struct Environment
     m::Int64
     s::Int64
     A::Matrix{Float64}
-    encoding::String
     initialization_method::String
     initialization_params::Vector{Any}
-    selecion_method::String
-    parent_selection_method::String
+    selection_method::String
     selection_params::Vector{Any}
+    parent_selection_method::String
+    parent_selection_params::Vector{Any}
     mutation_method::String
     mutation_probability::Float64
     mutation_params::Vector{Any}

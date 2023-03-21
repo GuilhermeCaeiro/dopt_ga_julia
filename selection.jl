@@ -49,7 +49,7 @@ function byclass(individuals::Vector{Individual}, num_individuals::Int64, percen
     n_remaining_individuals = num_individuals - n_best_individuals - n_worst_individuals
     remaining_individuals = Vector{Individual}()
 
-    println((size(individuals, 1), num_individuals, n_best_individuals, n_worst_individuals, n_remaining_individuals))
+    #println((size(individuals, 1), num_individuals, n_best_individuals, n_worst_individuals, n_remaining_individuals))
     
     if n_remaining_individuals > 0
         remaining_individuals = sample(individuals, n_remaining_individuals, replace=true) # sampling from the complete individual set with replacement.

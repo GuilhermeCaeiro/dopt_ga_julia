@@ -4,11 +4,13 @@ using Plots
 include("utils.jl")
 include("environment.jl")
 include("individual.jl")
+include("fitness.jl")
 include("initialization.jl")
 include("selection.jl")
 include("mutation.jl")
 include("crossover.jl")
-# include("adaptation.jl")
+include("search.jl")
+include("adaptation.jl")
 include("genetic_algorithm.jl")
 
 global execution_statistics = Dict(
@@ -23,7 +25,6 @@ function main()
     Random.seed!(0)
 
     A, R, m, n, s = read_instance(300, 1)
-
 
     start_time = get_time_in_ms()
 

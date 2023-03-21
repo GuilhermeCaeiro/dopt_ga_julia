@@ -1,6 +1,7 @@
 using Random
 using Plots
 using JSON
+using Statistics
 
 include("utils.jl")
 include("environment.jl")
@@ -110,6 +111,11 @@ end
 function write_result(environment::Environment, results::Vector{Individual}, total_time::Float64)
     if !isfile("results.csv")
         write_header([
+            "generation_ran",
+            "total_calls_to_conventional_of_calc",
+            "total_calls_to_efficient_of_calc",
+            "total_parent_zcalc_from_children",
+            "avg_iteration_time_in_seconds",
             "total_time_in_seconds",
             "best_cost",
             "solution"
@@ -127,6 +133,12 @@ function write_result(environment::Environment, results::Vector{Individual}, tot
         end
         result_line = result_line * string(getfield(environment, field)) * ";"
     end
+
+    result_line *= string(execution_statistics["current_generation"]) * ";"
+    result_line *= string(sum(values(execution_statistics["conventional_of_calc_calls"]))) * ";"
+    result_line *= string(sum(values(execution_statistics["efficient_of_calc_calls"]))) * ";"
+    result_line *= string(sum(values(execution_statistics["parent_zcalc_from_children"]))) * ";"
+    result_line *= string(mean(execution_statistics["iter_times"]) / 1000.0) * ";"
 
     result_line *= string(total_time) * ";"
     result_line *= string(results[1].fitness) * ";"
@@ -194,6 +206,7 @@ function main()
             "conventional_of_calc_calls" => Dict(0 => 0),
             "efficient_of_calc_calls" => Dict(0 => 0),
             "parent_zcalc_from_children" => Dict(0 => 0),
+            "iter_times" => [],
         )
         
         ga = GeneticAlgorithm(environment)

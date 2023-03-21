@@ -53,7 +53,7 @@ end
 function loop(ga::GeneticAlgorithm)
     # Initialize population
     population = initialize_population(ga.environment)
-    iter_times = Vector{Int64}()
+    #iter_times = Vector{Int64}()
 
     println("Post initialization stats: Conv. ->", execution_statistics["conventional_of_calc_calls"], " Effic. ->", execution_statistics["efficient_of_calc_calls"])
 
@@ -119,7 +119,7 @@ function loop(ga::GeneticAlgorithm)
             " Par. Zcalc f/ children: ", execution_statistics["parent_zcalc_from_children"][generation]
         )
 
-        push!(iter_times, get_time_in_ms().value - iter_start_time.value)
+        push!(execution_statistics["iter_times"], get_time_in_ms().value - iter_start_time.value)
 
         population_fitness = [individual.fitness for individual in population]
         push!(ga.population_fitness_avg, mean(population_fitness))
@@ -144,7 +144,11 @@ function loop(ga::GeneticAlgorithm)
         end
     end
 
-    println("Avg. Time for ", ga.environment.max_generations, " iterations: ", mean(iter_times), " Min|Max: ", minimum(iter_times), " | ", maximum(iter_times))
+    println(
+        "Avg. Time for ", ga.environment.max_generations, 
+        " iterations: ", mean(execution_statistics["iter_times"]), 
+        " Min|Max: ", minimum(execution_statistics["iter_times"]), " | ", maximum(execution_statistics["iter_times"])
+    )
 
     return ga.elite, ga.best_solution_tracking
 end

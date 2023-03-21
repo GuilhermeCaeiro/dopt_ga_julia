@@ -6,7 +6,7 @@
     "max_generations": [100],
     "max_time": [3600],
     "population_size": [30, 100],
-    "initialization_method": [["binary_random", []], ["binary_biasedweighted", []]],
+    "initialization_method": [["binary_random", []], ["binary_biasedweighted", []], ["binary_guided", []]],
     "selection_method": [["roulette", []], ["byclass", [0.1, 0.1]]],
     "parent_selection_method": [["fullyrandom", []]],
     "mutation_method": [["binary_singlepoint", []]],

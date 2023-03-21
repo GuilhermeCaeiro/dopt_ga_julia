@@ -177,6 +177,7 @@ function main()
             m, # m
             s, # s
             A, # A
+            R, # R
             experiment["initialization_method"], # initialization_method
             experiment["initialization_params"], # initialization_params
             experiment["selection_method"], # selecion_method

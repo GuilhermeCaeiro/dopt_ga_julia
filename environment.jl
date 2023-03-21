@@ -8,6 +8,7 @@ mutable struct Environment
     m::Int64
     s::Int64
     A::Matrix{Float64}
+    R::Matrix{Float64}
     initialization_method::String
     initialization_params::Vector{Any}
     selection_method::String

@@ -10,6 +10,7 @@ include("selection.jl")
 include("mutation.jl")
 include("crossover.jl")
 include("search.jl")
+include("fitness.jl")
 include("adaptation.jl")
 include("genetic_algorithm.jl")
 
@@ -40,6 +41,7 @@ function main()
         m, # m
         s, # s
         A, # A
+        R, # R
         "binary_random", # initialization_method
         [], # initialization_params
         "ranking", # selecion_method

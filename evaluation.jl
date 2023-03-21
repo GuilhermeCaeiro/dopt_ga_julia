@@ -10,7 +10,9 @@ include("initialization.jl")
 include("selection.jl")
 include("mutation.jl")
 include("crossover.jl")
-# include("adaptation.jl")
+include("search.jl")
+include("fitness.jl")
+include("adaptation.jl")
 include("genetic_algorithm.jl")
 
 function read_setup(setup_file)
@@ -175,6 +177,7 @@ function main()
             m, # m
             s, # s
             A, # A
+            R, # R
             experiment["initialization_method"], # initialization_method
             experiment["initialization_params"], # initialization_params
             experiment["selection_method"], # selecion_method

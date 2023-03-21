@@ -57,7 +57,26 @@ function binary_biasedweighted(environment::Environment)
     return [Individual(environment, chromosome) for chromosome in chromosomes]
 end
 
+function binary_guided(environment::Environment)
 
+    chromosomes = Vector{Vector{Int64}}()
+    R = map(Int64, environment.R)
+    m, n = size(environment.A)
+    s = environment.s
+    U, = svd(environment.A; full=true)
+    x_bar = vec(sum(U .^ 2; dims = 2))   
+    x_bar[R] .= 0.0
+
+    for i::Int64 in 1:environment.population_size
+        x = zeros(m)
+        x[R] .= 1.0 # choose independent rows
+        phi = partialsortperm(x_bar, (1:s-n); rev = true)
+        x[phi] .= 1.0
+        push!(chromosomes, deepcopy(x))
+    end
+
+    return [Individual(environment, chromosome) for chromosome in chromosomes]
+end
 
 
 function initialize_population(environment::Environment)
@@ -65,11 +84,13 @@ function initialize_population(environment::Environment)
     if environment.initialization_method == "binary_random"
         population = binary_random(environment)
     elseif environment.initialization_method == "binary_biased"
-        # initicialization_params is assumed to be  a float
+        # initialization_params is assumed to be  a float
         population = binary_biased(environment, environment.initialization_params[1])
     elseif environment.initialization_method == "binary_biasedweighted"
-        # initicialization_params is assumed to be  a float
+        # initialization_params is assumed to be  a float
         population = binary_biasedweighted(environment)
+    elseif environment.initialization_method == "binary_guided"
+        population = binary_guided(environment)
     else
         println("Unknow initialization method ", environment.initialization_method)
     end

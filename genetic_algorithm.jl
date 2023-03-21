@@ -57,6 +57,7 @@ function loop(ga::GeneticAlgorithm)
 
     println("Post initialization stats: Conv. ->", execution_statistics["conventional_of_calc_calls"], " Effic. ->", execution_statistics["efficient_of_calc_calls"])
 
+    loop_start_time = get_time_in_ms()
     # runs generations
     for generation in 1:ga.environment.max_generations
         execution_statistics["current_generation"] = generation
@@ -119,7 +120,9 @@ function loop(ga::GeneticAlgorithm)
             " Par. Zcalc f/ children: ", execution_statistics["parent_zcalc_from_children"][generation]
         )
 
-        push!(execution_statistics["iter_times"], get_time_in_ms().value - iter_start_time.value)
+        iter_time = get_time_in_ms() - iter_start_time
+
+        push!(execution_statistics["iter_times"], iter_time.value)
 
         population_fitness = [individual.fitness for individual in population]
         push!(ga.population_fitness_avg, mean(population_fitness))
@@ -133,6 +136,11 @@ function loop(ga::GeneticAlgorithm)
         
         push!(ga.population_fitness_avg_last_n_generations, mean(ga.population_fitness_avg[start_position:end]))
         push!(ga.population_fitness_std_last_n_generations, std(ga.population_fitness_std[start_position:end]))
+        
+        if (((get_time_in_ms() - loop_start_time).value / 1000.0) >= ga.environment.max_time) # "/ 1000" because the time provided in the setup file should be in seconds.
+            println("Maximum time reached. Stopping the GA.")
+            break
+        end
 
         if ga.environment.adaptation_method != "none"
             # checks if it is time to adapt

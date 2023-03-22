@@ -39,14 +39,6 @@ end
 
 function mutate(environment::Environment, individual::Individual)
     new_chromosome = deepcopy(individual.chromosome)
-    fitness = deepcopy(individual.fitness)
-
-    if !isdefined(individual, :Z_matrix) || isnothing(individual.Z_matrix)
-        Z = nothing
-        individual.Z_matrix = deepcopy(Z)
-    else
-        Z = deepcopy(individual.Z_matrix)
-    end
 
     new_ones = []
     new_zeros = []

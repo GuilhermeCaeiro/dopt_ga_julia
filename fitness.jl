@@ -40,6 +40,9 @@ function ldet(A)
 end
 
 function calculate_fitness(chromosome, A, s)
+    #println("CONVENTIONAL METHOD CALLED!")
+    execution_statistics["conventional_of_calc_calls"][execution_statistics["current_generation"]] += 1
+
     num_ones = sum(chromosome)
     objective_function = ldet(A'*spdiagm(vec(chromosome))*A);
     penalty = - 100 * abs(num_ones - s)
@@ -48,6 +51,8 @@ function calculate_fitness(chromosome, A, s)
 end
 
 function calculate_fitness(chromosome::Vector{Int64}, A::Matrix{Float64}, s::Int64, parent::Individual, new_ones::Vector{Int64}, new_zeros::Vector{Int64})
+    execution_statistics["efficient_of_calc_calls"][execution_statistics["current_generation"]] += 1
+    
     Z = deepcopy(parent.Z_matrix)
     objective_function = deepcopy(parent.objective_function)
     det_sign = nothing

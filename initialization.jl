@@ -38,7 +38,6 @@ function binary_biased(environment::Environment, min_diff)
 end
 
 function binary_biasedweighted(environment::Environment)
-    println("binary_biasedweighted")
     chromosomes = Vector{Vector{Int64}}()
     
     chromosome = zeros(Int64, environment.n)
@@ -98,7 +97,7 @@ function initialize_population(environment::Environment)
     elseif environment.initialization_method == "binary_guided"
         population = binary_guided(environment)
     else
-        println("Unknow initialization method ", environment.initialization_method)
+        throw(error("Unknow initialization method $(environment.initialization_method)"))
     end
     return population
 end

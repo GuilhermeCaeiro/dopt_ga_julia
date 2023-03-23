@@ -34,7 +34,7 @@ mutable struct Individual
 
             catch e
                 if isa(e, SingularException)
-                    println("Matrix (environment.A' * diagm(parent.chromosome) * environment.A) is singular. Falling back to the normal calculation method.")
+                    # println("Matrix (environment.A' * diagm(parent.chromosome) * environment.A) is singular. Falling back to the normal calculation method.")
                     fitness, objective_function, penalty = calculate_fitness(chromosome, environment.A, environment.s)
                     return new(environment, chromosome, fitness, objective_function, penalty)
                 else

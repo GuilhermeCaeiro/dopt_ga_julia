@@ -159,10 +159,12 @@ end
 
 function main()
     experiments = read_setup("experiment_setup.json")
-
-    for experiment in experiments
+    n_experiments = length(experiments)
+    println("Total number of experiments: ", n_experiments)
+    
+    for (id, experiment) in enumerate(experiments)
         retrieve_additional_params(experiment)
-        println(experiment)
+        # println(experiment)
 
         A, R, m, n, s = read_instance(experiment["instance"][1], experiment["instance"][2])
 
@@ -197,7 +199,7 @@ function main()
             experiment["perform_prlike_crossover"], # perform path-relinking-like crossover
         )
 
-        println(environment.instance)
+        # println(environment.instance)
 
         start_time = get_time_in_ms()
 
@@ -216,6 +218,18 @@ function main()
 
         total_time = get_time_in_ms() - start_time
         total_time_float = total_time.value/1000.0
+
+        println("Experiment: ", id, "/", n_experiments, 
+                " | Instance: ", experiment["instance"][1], "-", experiment["instance"][2], 
+                " | Pop size: ", experiment["population_size"],
+                " | Init.: ", experiment["initialization_method"],
+                " | Selection: ", experiment["selection_method"],
+                " | Crossover: ", experiment["crossover_method"],
+                " | Mutation: ", experiment["mutation_method"],
+                " | Adapt.: ", experiment["adaptation_method"],
+                " | prlike: ", experiment["perform_prlike_crossover"],
+                " | Time: ", total_time_float, "s | Best Cost: ", results[1].fitness
+            )
 
         write_result(environment, results, total_time_float)
 

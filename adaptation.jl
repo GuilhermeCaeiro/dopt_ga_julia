@@ -1,9 +1,9 @@
 
 function reset_commoner_population(environment::Environment, elite::Vector{Individual})
-    println("Resetting commoners.")
+    # println("Resetting commoners.")
     commoners = initialize_population(environment) # could temporarily change population size to avoid generating more individuals than needed
     needed_commoners = environment.population_size - length(elite)
-    print("needed_commoners ", needed_commoners)
+    # println("needed_commoners ", needed_commoners)
     return [elite; commoners[1:needed_commoners]]
 end
 

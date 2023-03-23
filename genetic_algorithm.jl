@@ -55,7 +55,7 @@ function loop(ga::GeneticAlgorithm)
     population = initialize_population(ga.environment)
     #iter_times = Vector{Int64}()
 
-    println("Post initialization stats: Conv. ->", execution_statistics["conventional_of_calc_calls"], " Effic. ->", execution_statistics["efficient_of_calc_calls"])
+    # println("Post initialization stats: Conv. ->", execution_statistics["conventional_of_calc_calls"], " Effic. ->", execution_statistics["efficient_of_calc_calls"])
 
     loop_start_time = get_time_in_ms()
     # runs generations
@@ -109,16 +109,18 @@ function loop(ga::GeneticAlgorithm)
         commoners = select(ga.environment, commoners, ga.environment.population_size - ga.elite_size, ga.environment.selection_method)
         population = [ga.elite; commoners]
 
-        println(
-            "Iteration: ", generation, 
-            " Pop. size: ", length(population), 
-            " Best Sol.: ", population[1].objective_function, 
-            " Avg Sol.: ", mean(x-> x.fitness, population), 
-            " Std Sol.: ", std([x.fitness for x in population]), 
-            " Conventional OF: ", execution_statistics["conventional_of_calc_calls"][generation], 
-            " Efficient OF: ", execution_statistics["efficient_of_calc_calls"][generation],
-            " Par. Zcalc f/ children: ", execution_statistics["parent_zcalc_from_children"][generation]
-        )
+        # if generation % 1_000 == 0
+        #     println(
+        #         "Iteration: ", generation, 
+        #         " Pop. size: ", length(population), 
+        #         " Best Sol.: ", population[1].objective_function, 
+        #         " Avg Sol.: ", mean(x-> x.fitness, population), 
+        #         " Std Sol.: ", std([x.fitness for x in population]), 
+        #         " Conventional OF: ", execution_statistics["conventional_of_calc_calls"][generation], 
+        #         " Efficient OF: ", execution_statistics["efficient_of_calc_calls"][generation],
+        #         " Par. Zcalc f/ children: ", execution_statistics["parent_zcalc_from_children"][generation]
+        #     )
+        # end
 
         iter_time = get_time_in_ms() - iter_start_time
 
@@ -138,25 +140,25 @@ function loop(ga::GeneticAlgorithm)
         push!(ga.population_fitness_std_last_n_generations, std(ga.population_fitness_std[start_position:end]))
         
         if (((get_time_in_ms() - loop_start_time).value / 1000.0) >= ga.environment.max_time) # "/ 1000" because the time provided in the setup file should be in seconds.
-            println("Maximum time reached. Stopping the GA.")
+            # println("Maximum time reached. Stopping the GA.")
             break
         end
 
         if ga.environment.adaptation_method != "none"
             # checks if it is time to adapt
             if (generation - ga.best_solution_change_or_adaptation_performed) > ga.environment.generations_until_adaptation
-                println("Performing adaptation in generation ", generation) 
+                # println("Performing adaptation in generation ", generation) 
                 population = adapt(ga.environment, ga.elite)
                 ga.best_solution_change_or_adaptation_performed = generation
             end
         end
     end
 
-    println(
-        "Avg. Time for ", ga.environment.max_generations, 
-        " iterations: ", mean(execution_statistics["iter_times"]), 
-        " Min|Max: ", minimum(execution_statistics["iter_times"]), " | ", maximum(execution_statistics["iter_times"])
-    )
+    # println(
+    #     "Avg. Time for ", ga.environment.max_generations, 
+    #     " iterations: ", mean(execution_statistics["iter_times"]), 
+    #     " Min|Max: ", minimum(execution_statistics["iter_times"]), " | ", maximum(execution_statistics["iter_times"])
+    # )
 
     return ga.elite, ga.best_solution_tracking
 end

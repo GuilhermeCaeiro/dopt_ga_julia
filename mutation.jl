@@ -52,7 +52,7 @@ function mutate(environment::Environment, individual::Individual)
         # mutation_params is assumed to be two floats between 0 and 1, with the fist smaller than the second.
         new_chromosome, new_ones, new_zeros = binary_variablepercentchange_mutation!(new_chromosome, environment, environment.mutation_params[1], environment.mutation_params[2])
     else
-        throw(error("Unknow mutation_method method " + environment.mutation_method))
+        throw(error("Unknow mutation_method method $(environment.mutation_method)"))
     end
     
     return Individual(environment, new_chromosome, individual, new_ones, new_zeros)

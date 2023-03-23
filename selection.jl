@@ -77,7 +77,7 @@ function select(environment::Environment, individuals::Vector{Individual}, num_i
     elseif method == "byclass"
         selected = byclass(individuals, num_individuals, environment.selection_params[1], environment.selection_params[2])
     else
-        println("Unknow selection method ", method)
+        throw(error("Unknow selection method $(method)"))
     end
 
     return selected

@@ -157,11 +157,64 @@ function write_result(environment::Environment, results::Vector{Individual}, tot
 
 end
 
+function warmup(experiments)
+    n_experiments = length(experiments)
+    print("Warming up ", n_experiments, " experiments:")
+    for (id, experiment) in enumerate(experiments)
+        retrieve_additional_params(experiment)
+        A, R, m, n, s = read_instance(experiment["instance"][1], experiment["instance"][2])
+        environment = Environment(
+            experiment["seed"], # seed
+            string(experiment["instance"][1]) * "-" * string(experiment["instance"][2]), # instance
+            experiment["max_generations"], # max_generations
+            experiment["max_time"], # max_time
+            experiment["population_size"], # population_size
+            n, # n
+            m, # m
+            s, # s
+            A, # A
+            R, # R
+            experiment["initialization_method"], # initialization_method
+            experiment["initialization_params"], # initialization_params
+            experiment["selection_method"], # selecion_method
+            experiment["selection_params"], # selection_params
+            experiment["parent_selection_method"], # parent_selection_method
+            experiment["parent_selection_params"], # parent_selection_params
+            experiment["mutation_method"], # mutation_method
+            experiment["mutation_probability"], # mutation_probability
+            experiment["mutation_params"], # mutation_params
+            experiment["crossover_method"], # crossover_method
+            experiment["crossover_probability"], # crossover_probability
+            experiment["crossover_params"], # crossover_params
+            experiment["elite_size"], # elite_size
+            experiment["offspring_size"], # offspring_size
+            experiment["adaptation_method"], # adaptation_method | accepts "none" and "reset"
+            experiment["adaptation_params"], # adaptation_params
+            experiment["generations_until_adaptation"], # generations_until_adaptation
+            experiment["perform_prlike_crossover"], # perform path-relinking-like crossover
+        )
+
+        global execution_statistics = Dict(
+            "current_generation" => 0,
+            "conventional_of_calc_calls" => Dict(0 => 0),
+            "efficient_of_calc_calls" => Dict(0 => 0),
+            "parent_zcalc_from_children" => Dict(0 => 0),
+            "iter_times" => [],
+        )
+        
+        ga = GeneticAlgorithm(environment)
+        results, solutions = loop(ga)
+
+        print(" ", id, " ")
+    end
+    println()
+end
+
 function main()
     experiments = read_setup("experiment_setup.json")
     n_experiments = length(experiments)
     println("Total number of experiments: ", n_experiments)
-    
+    warmup(deepcopy(experiments[1:30]))
     for (id, experiment) in enumerate(experiments)
         retrieve_additional_params(experiment)
         # println(experiment)
